@@ -27,6 +27,7 @@ const buttonVariants = cva(
         zinc: "hover:bg-zinc-200 hover:text-zinc-800",
         slate: "hover:bg-slate-200 hover:text-slate-800",
         purple: "hover:bg-purple-50 hover:text-purple-800",
+        orange: "hover:bg-orange-50 hover:text-orange-800",
         teal: "hover:bg-teal-50 hover:text-teal-800",
         indigo: "hover:bg-indigo-50 hover:text-indigo-800",
         sky: "hover:bg-sky-50 hover:text-sky-800",
@@ -42,6 +43,7 @@ const buttonVariants = cva(
         zinc: "bg-zinc-200 text-zinc-800",
         slate: "bg-slate-200 text-slate-800",
         purple: "bg-purple-50 text-purple-800",
+        orange: "bg-orange-50 text-orange-800",
         teal: "bg-teal-50 text-teal-800",
         indigo: "bg-indigo-50 text-indigo-800",
         sky: "bg-sky-50 text-sky-800",
@@ -57,6 +59,7 @@ const buttonVariants = cva(
         zinc: "bg-zinc-700 text-zinc-50 hover:bg-zinc-800",
         slate: "bg-slate-700 text-slate-50 hover:bg-slate-800",
         purple: "bg-purple-700 text-purple-50 hover:bg-purple-800",
+        orange: "bg-orange-700 text-orange-50 hover:bg-orange-800",
         teal: "bg-teal-700 text-teal-50 hover:bg-teal-800",
         indigo: "bg-indigo-700 text-indigo-50 hover:bg-indigo-800",
         light: "bg-slate-100 text-slate-700 hover:bg-slate-400 hover:text-slate-50",
@@ -88,9 +91,9 @@ export interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
   to?:string
-  accent?:'purple'|'teal'|'indigo'|'zinc' | 'slate' | 'sky' | 'emerald'  | 'lime'  | 'green' | 'cyan' | 'blue' | 'pink' | 'rose' | null
-  activeAccent?:'purple'|'teal'|'indigo'|'zinc' | 'slate'  | 'sky' | 'emerald' | 'lime'  | 'green' | 'cyan' | 'blue' | 'pink' | 'rose' | null
-  tone?:'purple'|'teal'|'indigo'|'zinc' | 'slate'  |'light' | 'sky' | 'emerald'  | 'lime'  | 'green' | 'cyan' | 'blue' | 'pink' | 'rose'
+  accent?:'purple'|'orange'|'teal'|'indigo'|'zinc' | 'slate' | 'sky' | 'emerald'  | 'lime'  | 'green' | 'cyan' | 'blue' | 'pink' | 'rose' | null
+  activeAccent?:'purple'|'orange'|'teal'|'indigo'|'zinc' | 'slate'  | 'sky' | 'emerald' | 'lime'  | 'green' | 'cyan' | 'blue' | 'pink' | 'rose' | null
+  tone?:'purple'|'orange'|'teal'|'indigo'|'zinc' | 'slate'  |'light' | 'sky' | 'emerald'  | 'lime'  | 'green' | 'cyan' | 'blue' | 'pink' | 'rose'
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(

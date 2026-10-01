@@ -1,4 +1,4 @@
-// bg-purple-800 text-white bg-slate-800 bg-pink-800 bg-sky-800 bg-emerald-800 bg-lime-800 bg-green-800 bg-cyan-800 bg-blue-800 bg-rose-800 bg-indigo-800 bg-slate-800 hover:bg-purple-800 hover:text-white hover:bg-slate-800 hover:bg-pink-800 hover:bg-sky-800 hover:bg-emerald-800 hover:bg-lime-800 hover:bg-green-800 hover:bg-cyan-800 hover:bg-blue-800 hover:bg-rose-800 hover:bg-indigo-800 hover:bg-slate-800
+// bg-orange-800 hover:bg-orange-800 bg-purple-800 text-white bg-slate-800 bg-pink-800 bg-sky-800 bg-emerald-800 bg-lime-800 bg-green-800 bg-cyan-800 bg-blue-800 bg-rose-800 bg-indigo-800 bg-slate-800 hover:bg-purple-800 hover:text-white hover:bg-slate-800 hover:bg-pink-800 hover:bg-sky-800 hover:bg-emerald-800 hover:bg-lime-800 hover:bg-green-800 hover:bg-cyan-800 hover:bg-blue-800 hover:bg-rose-800 hover:bg-indigo-800 hover:bg-slate-800
 
 import { ReactNode, useState } from 'react'
 import { app, attendance, user } from '@/atoms/kuepa';
