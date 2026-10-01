@@ -17,6 +17,24 @@ export interface LeadPayload {
   notes: string
 }
 
+export type ScoringLevel = 'high' | 'medium' | 'low'
+export type ScoringFactorKey = 'source' | 'channels' | 'notes' | 'recency' | 'history' | 'status'
+
+export interface LeadScoring {
+  score: number
+  level: ScoringLevel
+  engine: 'rules' | 'openai'
+  model?: string
+  rule_score: number
+  factors: Array<{ key: ScoringFactorKey, points: number, max: number }>
+  summary?: string
+  strengths?: string[]
+  risks?: string[]
+  next_action?: string
+  next_action_key: 'call_today' | 'follow_up' | 'nurture' | 'enrolled' | 'closed'
+  evaluated_at: string
+}
+
 export interface Lead {
   _id: string
   incremental: number
@@ -34,6 +52,7 @@ export interface Lead {
   source: LeadSource
   status: LeadStatus
   notes?: string
+  scoring?: LeadScoring
   created_at: string
 }
 
@@ -57,6 +76,9 @@ export const leadService = {
   },
   update: async(_id: string, data: LeadPayload & { status: LeadStatus }) =>{
     return await post({api: `${api}/update/${_id}`, options: { data: {...data} }})
+  },
+  score: async(_id: string) =>{
+    return await post({api: `${api}/score/${_id}`})
   },
   remove: async(_id: string) =>{
     return await post({api: `${api}/delete/${_id}`})
