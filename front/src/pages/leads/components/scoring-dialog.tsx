@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import moment from "moment"
+import 'moment/dist/locale/es'
 import { AlertTriangle, CheckCircle2, LoaderCircle, RefreshCw, Sparkles, Target } from "lucide-react"
 import { Lead, LeadScoring, ScoringLevel, leadService } from "@/services/leadService"
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
