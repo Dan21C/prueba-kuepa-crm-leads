@@ -59,7 +59,7 @@ const buttonVariants = cva(
         zinc: "bg-zinc-700 text-zinc-50 hover:bg-zinc-800",
         slate: "bg-slate-700 text-slate-50 hover:bg-slate-800",
         purple: "bg-purple-700 text-purple-50 hover:bg-purple-800",
-        orange: "bg-orange-700 text-orange-50 hover:bg-orange-800",
+        orange: "bg-orange-600 text-white hover:bg-orange-700",
         teal: "bg-teal-700 text-teal-50 hover:bg-teal-800",
         indigo: "bg-indigo-700 text-indigo-50 hover:bg-indigo-800",
         light: "bg-slate-100 text-slate-700 hover:bg-slate-400 hover:text-slate-50",

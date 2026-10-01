@@ -82,13 +82,13 @@ export function ProgramPicker ({ id, programs, loading, value, invalid, describe
             onBlur={onBlur}
             className={cn(
               "group relative flex items-start gap-3 rounded-lg border p-3 text-left transition-all duration-200",
-              "hover:-translate-y-0.5 hover:border-orange-300 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 motion-reduce:hover:translate-y-0",
-              selected ? "border-orange-600 bg-orange-50 shadow-sm" : "border-slate-200 bg-white"
+              "hover:-translate-y-0.5 hover:border-orange-400 hover:shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 motion-reduce:hover:translate-y-0",
+              selected ? "border-orange-500 bg-orange-50 shadow-sm" : "border-slate-200 bg-white"
             )}
           >
             <span className={cn(
               "flex h-9 w-9 shrink-0 items-center justify-center rounded-md transition-colors duration-200",
-              selected ? "bg-orange-700 text-white" : "bg-slate-100 text-slate-600 group-hover:bg-orange-100 group-hover:text-orange-800"
+              selected ? "bg-orange-500 text-white" : "bg-slate-100 text-slate-600 group-hover:bg-orange-100 group-hover:text-orange-800"
             )}>
               <Icon className="h-5 w-5" />
             </span>
@@ -98,7 +98,7 @@ export function ProgramPicker ({ id, programs, loading, value, invalid, describe
             </span>
             {
               selected ?
-                <Check aria-hidden className="absolute right-2 top-2 h-4 w-4 text-orange-700 animate-in zoom-in-50 fade-in duration-200" />
+                <Check aria-hidden className="absolute right-2 top-2 h-4 w-4 text-orange-500 animate-in zoom-in-50 fade-in duration-200" />
               : null
             }
           </button>

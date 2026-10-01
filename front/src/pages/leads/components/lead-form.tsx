@@ -203,7 +203,7 @@ export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, 
             aria-valuenow={progress}
             className="h-1.5 w-full overflow-hidden rounded-full bg-orange-100"
           >
-            <div className="h-full rounded-full bg-orange-700 transition-[width] duration-500 ease-out" style={{ width: `${progress}%` }} />
+            <div className="h-full rounded-full bg-orange-500 transition-[width] duration-500 ease-out" style={{ width: `${progress}%` }} />
           </div>
         </div>
 
@@ -379,7 +379,7 @@ export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, 
                     value={value}
                     variant="outline"
                     size="sm"
-                    className="gap-1.5 px-3 transition-all data-[state=on]:border-orange-600 data-[state=on]:bg-orange-100 data-[state=on]:text-orange-900"
+                    className="gap-1.5 px-3 transition-all data-[state=on]:border-orange-500 data-[state=on]:bg-orange-100 data-[state=on]:text-orange-900"
                   >
                     <Icon />
                     {t(`leads.form.source.options.${value}`)}
@@ -410,7 +410,7 @@ export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, 
                         value={value}
                         variant="outline"
                         size="sm"
-                        className="px-3 transition-all data-[state=on]:border-orange-600 data-[state=on]:bg-orange-100 data-[state=on]:text-orange-900"
+                        className="px-3 transition-all data-[state=on]:border-orange-500 data-[state=on]:bg-orange-100 data-[state=on]:text-orange-900"
                       >
                         {t(`leads.form.status.${value}`)}
                       </ToggleGroupItem>
