@@ -17,6 +17,8 @@ Prueba técnica Full Stack para Kuepa EduTech. Sobre la plantilla del CRM (login
   - Validación en el cliente igual a la del back y aviso de contacto existente.
   - Panel de leads recientes.
   - Textos en español e inglés, y animaciones que respetan `prefers-reduced-motion`.
+- **Edición y borrado de leads** desde la tabla. La edición abre un panel lateral que reutiliza el mismo formulario y la misma validación, e incluye el cambio de estado. El borrado es lógico y pide confirmación.
+- **Análisis de factibilidad** (`POST /api/lead/score/:_id`): un score de 0 a 100 de la probabilidad de matrícula, con factores explicables y una siguiente acción recomendada. Si se configura `OPENAI_API_KEY`, se suma un análisis redactado por OpenAI.
 - Corrección de los problemas de la plantilla que impedían que el módulo de leads funcionara (ver más abajo).
 - Pruebas de la validación (`node:test`), CI con GitHub Actions y `docker-compose` con Mongo.
 
@@ -59,13 +61,15 @@ Después de iniciar sesión, entra a **CRM → Contactos** en el sidebar, o dire
 | `PUBLIC_URL` | `http://localhost:7001` |
 | `MONGO_URI` | `mongodb://127.0.0.1:27017/kuepa_test…` |
 | `JWT_SECRET` | secreto de la plantilla |
+| `OPENAI_API_KEY` | vacío: el análisis de factibilidad usa solo reglas |
+| `OPENAI_MODEL` | `gpt-4o-mini` |
 
 **Scripts útiles**
 
 | Dónde | Comando | Qué hace |
 |---|---|---|
 | back | `npm run typecheck` | Verificación de tipos con `tsc` |
-| back | `npm test` | Pruebas de normalización y validación de leads |
+| back | `npm test` | Pruebas de validación y del score de factibilidad |
 | front | `npm run build` | Verificación de tipos y build de producción |
 
 ## Análisis del modelo de datos y decisiones
@@ -113,6 +117,32 @@ Si el contacto ya tiene un lead en estado `active` o `grading`, la API responde 
 ### Asignación de asesor
 
 El asesor (`adviser`) es el `Third` asociado al usuario logueado (`Third.user = user._id`). La plantilla original creaba el usuario de prueba **sin** ese `Third`. Ahora `initSeeder` lo crea con `type: 'emp'`, pero el servicio sigue siendo tolerante: si un usuario no tiene `Third`, el lead se crea sin asesor en lugar de fallar, y `list` solo filtra por asesor cuando ese `Third` existe. La asignación balanceada por campaña queda como mejora futura; el `TODO: Balance` del servicio `external` ya la anticipa.
+
+### Edición y borrado
+
+- **Editar** actualiza dos cosas. Los datos personales se guardan en el `Third`, porque son de la persona, y aplican a todos sus leads. Programa, origen, notas y estado se guardan en el `Lead`. Se valida que el nuevo documento, correo o celular no pertenezca a otro contacto (409 `third.already_exists`). Tampoco se permite reabrir un lead (`active`/`grading`) si el contacto ya tiene otro abierto.
+- **Borrar** es un borrado lógico con `mongoose-delete`, que el modelo ya traía configurado: el lead deja de aparecer, pero se conserva para auditoría. El `Third` **no** se borra, porque puede tener otros leads o interacciones. Un lead borrado tampoco bloquea registrar un lead nuevo para esa persona.
+- Las mutaciones usan `POST` (`/update/:_id`, `/delete/:_id`) para seguir la convención de la plantilla (`/upsert`, `/ghost`) y el helper `post` del front.
+
+### Análisis de factibilidad (reglas + OpenAI)
+
+El objetivo es ayudar al asesor a priorizar: a qué lead llamar primero y qué hacer con cada uno.
+
+1. **Score por reglas** (`leadScoring.ts`). Es determinístico, está probado y no depende de servicios externos. Suma seis factores:
+
+   | Factor | Puntos máximos | Criterio |
+   |---|---|---|
+   | Origen | 25 | Referido 25, evento 20, web 18, redes 12, manual 10 |
+   | Canales de contacto | 20 | Documento, correo y celular disponibles |
+   | Notas | 15 | Notas con contexto (40 caracteres o más) suman más que notas cortas |
+   | Recencia | 20 | Un lead de 2 días o menos vale más que uno de más de un mes |
+   | Historial | 10 | El contacto ya había mostrado interés antes |
+   | Estado | 10 | Más puntos si está en calificación (`grading`) que si está solo activo |
+
+   Niveles: **alta** desde 70 puntos, **media** desde 45 y **baja** por debajo. Un lead `sold` vale 100 y uno `dropped` o `inactive` no pasa de 20.
+2. **OpenAI (opcional)**. Si existe `OPENAI_API_KEY`, `openaiUtility` llama a Chat Completions con `fetch` nativo (sin SDK nuevo), en modo JSON y con timeout. Los prompts viven en `resources/prompts/` (`system.ts` e `inference.ts`), que la plantilla ya tenía preparados y vacíos. El modelo recibe el score por reglas como referencia y **solo puede moverlo ±20 puntos**, lo que mantiene el resultado predecible. Además redacta el resumen, las fortalezas, los riesgos y la siguiente acción.
+3. **Privacidad**: a OpenAI **no** se envían nombre, documento, correo ni celular. Solo viajan el programa, el origen, el estado, la antigüedad, si existe cada canal (sí/no), las notas y el historial.
+4. **Tolerancia a fallos**: si no hay key, la API falla o se agota el tiempo, la respuesta usa solo las reglas. El resultado se guarda en `lead.scoring` y la tabla lo muestra como un chip de color.
 
 ## Problemas encontrados en la plantilla y cómo se resolvieron
 
@@ -221,13 +251,58 @@ Reglas de validación (las mismas en el front y en el back):
 
 Si no hay coincidencia responde `{ "exists": false }`, y `lead` es `null` cuando el contacto no tiene un lead abierto.
 
+### `POST /api/lead/update/:_id`
+
+El body es el mismo que el de `create`, más `status`. Responde **200** con el lead actualizado y poblado.
+
+**Respuestas de error**
+
+| Código | `message` | Cuándo |
+|---|---|---|
+| 400 | `lead.invalid_params` | Algún campo no es válido |
+| 404 | `lead.not_found` | El lead no existe |
+| 404 | `program.not_found` | El programa no existe |
+| 409 | `third.already_exists` | El nuevo documento, correo o celular es de otro contacto. Incluye `fields`, p. ej. `{ "email": "already_exists" }` |
+| 409 | `lead.already_exists` | Se intenta reabrir el lead y el contacto ya tiene otro abierto |
+
+### `POST /api/lead/delete/:_id`
+
+Hace borrado lógico. Responde `{ "code": 200, "deleted": true }`, o 404 si el lead no existe.
+
+### `POST /api/lead/score/:_id`
+
+```json
+{
+  "code": 200,
+  "status": "success",
+  "object": {
+    "score": 80,
+    "level": "high",
+    "engine": "rules",
+    "rule_score": 80,
+    "factors": [
+      { "key": "source", "points": 20, "max": 25 },
+      { "key": "channels", "points": 20, "max": 20 },
+      { "key": "notes", "points": 15, "max": 15 },
+      { "key": "recency", "points": 20, "max": 20 },
+      { "key": "history", "points": 0, "max": 10 },
+      { "key": "status", "points": 5, "max": 10 }
+    ],
+    "next_action_key": "call_today",
+    "evaluated_at": "2026-10-01T15:00:00.000Z"
+  }
+}
+```
+
+Con OpenAI, `engine` es `"openai"` y la respuesta incluye además `model`, `summary`, `strengths`, `risks` y `next_action`, este último redactado por el modelo.
+
 ### `GET /api/lead` (actualizado)
 
 Devuelve los últimos 100 leads con `contact` e `interestProgram` poblados y `full_name` calculado. Si el usuario logueado tiene un `Third` asociado, solo muestra sus leads.
 
 ## Flujo de trabajo
 
-- Ramas por feature: `feat/back-leads`, `feat/front-leads-form`, `chore/ci-tests` y `docs/readme`. Cada una se integra a `main` con `merge --no-ff`, para que el historial muestre cada bloque.
+- Ramas por feature: `feat/back-leads`, `feat/front-leads-form`, `chore/ci-tests`, `docs/readme`, `feat/seeder-acceso-crm`, `feat/lead-edicion` y `feat/lead-scoring`. Cada una se integra a `main` con `merge --no-ff`, para que el historial muestre cada bloque.
 - Commits atómicos con Conventional Commits en español.
 - **CI** (`.github/workflows/ci.yml`): en cada push a `main` y en cada PR corre el typecheck y las pruebas del back, y el build del front (Node 18, con caché de npm). El `dist` del front queda como artefacto del workflow.
 
@@ -235,7 +310,8 @@ Devuelve los últimos 100 leads con `contact` e `interestProgram` poblados y `fu
 
 - **Pruebas de integración** de `leadService` contra un Mongo en memoria o en un contenedor de CI, y pruebas de componentes del formulario.
 - **Paginación y filtros** en el listado (estado, programa, asesor, fechas) y búsqueda por nombre o documento.
-- **Edición y detalle del lead**: cambio de estado y reasignación de asesor.
+- **Reasignación de asesor** desde la edición, y una vista de detalle con el historial de interacciones.
+- **Calibrar el score** con datos reales de conversión por origen y programa, y recalcularlo automáticamente al cambiar el estado o al registrar un seguimiento.
 - **Trackings**: registrar seguimientos desde la UI, con transiciones de estado según `target_status`.
 - **Asignación balanceada de asesores por campaña** (round-robin o según carga), y crear el `Third` del asesor al crear el usuario.
 - **Unicidad en base de datos**: índices únicos parciales en `Third` (`type: 'cli'` + documento o correo) para cerrar las condiciones de carrera de la deduplicación, y un contador atómico para `incremental`.

@@ -16,6 +16,10 @@ export default {
     }
   },
   jwt: process.env.JWT_SECRET || 'yp58Fkp-7wEnrklK98RRUZ75jcmV8SV_ln-fFn4s5DVSG_YRpD_gt_il1we0AwOdFpZ2e-2pyhR5eC46xU',
+  openai: {
+    key: process.env.OPENAI_API_KEY || '',
+    model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+  },
   port: Number(process.env.PORT) || 7001,
   public_url: process.env.PUBLIC_URL || 'http://localhost:7001'
 }

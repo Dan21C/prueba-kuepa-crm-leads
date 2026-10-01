@@ -9,6 +9,10 @@ import { LEAD_OPEN_STATUSES, LEAD_STATUSES } from "@app/models/leadModel"
 // @import_utilities
 import { responseUtility } from "@core/utilities/responseUtility"
 import { normalizeLead, validateLead, ILeadCreateParams, LeadFieldErrors, OBJECT_ID_REGEX } from "@app/domains/lead/leadValidation"
+import { scoreLead, levelFor } from "@app/domains/lead/leadScoring"
+import { openaiUtility } from "@core/utilities/openaiUtility"
+import { system } from "@app/resources/prompts/system"
+import { inference } from "@app/resources/prompts/inference"
 import moment from "moment";
 
 // @import_types
@@ -267,6 +271,90 @@ class LeadService {
 
       return responseUtility.success({
         deleted: true
+      })
+    } catch (error) {
+      console.log('error', error)
+      return responseUtility.error('server.error', null, { code: 500 })
+    }
+  }
+
+  /**
+  * Calcula la factibilidad de que el lead se matricule y la guarda en `lead.scoring`.
+  * Siempre calcula el score por reglas; si hay OPENAI_API_KEY lo enriquece con un análisis del modelo.
+  */
+  public async score (_params:{_id:string}) {
+    try{
+      if(!OBJECT_ID_REGEX.test(`${_params._id || ''}`)) return responseUtility.error('lead.not_found', null, { code: 404 })
+      const lead = await Lead.findOne({_id: _params._id})
+      .populate(LEAD_POPULATE)
+      .lean()
+      if(!lead) return responseUtility.error('lead.not_found', null, { code: 404 })
+
+      const previous_leads = await Lead.countDocuments({contact: lead.contact?._id, _id: {$ne: lead._id}})
+      const days_since_created = moment().diff(moment(lead.created_at), 'days')
+      const channels = {
+        document: !!lead.contact?.document,
+        email: !!lead.contact?.email,
+        number: !!lead.contact?.number,
+      }
+
+      const rules = scoreLead({
+        source: lead.source,
+        status: lead.status,
+        notes: lead.notes,
+        has_document: channels.document,
+        has_email: channels.email,
+        has_number: channels.number,
+        days_since_created,
+        previous_leads,
+      })
+
+      const scoring: any = {
+        score: rules.score,
+        level: rules.level,
+        engine: 'rules',
+        rule_score: rules.score,
+        factors: rules.factors,
+        next_action_key: rules.next_action,
+        evaluated_at: new Date(),
+      }
+
+      const ai = await openaiUtility.chatJSON<{score:number, summary:string, strengths:string[], risks:string[], next_action:string}>({
+        system: system.lead_scoring,
+        user: inference.lead_scoring({
+          program: lead.interestProgram?.name || 'sin programa',
+          source: lead.source,
+          status: lead.status,
+          days_since_created,
+          channels,
+          previous_leads,
+          notes: lead.notes,
+          rule_score: rules.score,
+          factors: rules.factors,
+        }),
+      })
+
+      if(ai && Number.isFinite(Number(ai.score))){
+        // El modelo solo puede mover el score ±20 respecto a las reglas, para que sea predecible
+        const score = Math.round(Math.min(rules.score + 20, Math.max(rules.score - 20, Number(ai.score))))
+        const text = (value: unknown, max: number) => typeof value === 'string' ? value.trim().slice(0, max) : undefined
+        const list = (value: unknown) => Array.isArray(value) ? value.map((_v) => text(_v, 160)).filter(Boolean).slice(0, 3) : []
+        Object.assign(scoring, {
+          score: Math.min(100, Math.max(0, score)),
+          level: levelFor(score),
+          engine: 'openai',
+          model: openaiUtility.model,
+          summary: text(ai.summary, 400),
+          strengths: list(ai.strengths),
+          risks: list(ai.risks),
+          next_action: text(ai.next_action, 200),
+        })
+      }
+
+      await Lead.updateOne({_id: lead._id}, {$set: {scoring}})
+
+      return responseUtility.success({
+        object: scoring
       })
     } catch (error) {
       console.log('error', error)

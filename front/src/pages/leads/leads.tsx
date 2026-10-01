@@ -2,7 +2,7 @@ import { app } from "@/atoms/kuepa"
 import { useCallback, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { LoaderCircle } from "lucide-react"
-import { Lead, leadService } from "@/services/leadService"
+import { Lead, LeadScoring, leadService } from "@/services/leadService"
 import { Program, programService } from "@/services/programService"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { useToast } from "@/components/hooks/use-toast"
 import { LeadForm } from "./components/lead-form"
 import { RecentLeads } from "./components/recent-leads"
+import { ScoringDialog } from "./components/scoring-dialog"
 
 export interface LeadsProps {
 }
@@ -27,6 +28,7 @@ export default function Leads (props?: LeadsProps) {
   const [deleting, setDeleting] = useState<Lead | null>(null)
   const [removing, setRemoving] = useState(false)
   const [removingId, setRemovingId] = useState<string | null>(null)
+  const [scoring, setScoring] = useState<Lead | null>(null)
 
   useEffect(() => {
     app.set({
@@ -66,6 +68,10 @@ export default function Leads (props?: LeadsProps) {
     setHighlightId(lead._id)
     await loadLeads()
   }
+
+  const onScored = useCallback((leadId: string, result: LeadScoring) => {
+    setLeads((current) => current.map((_l) => _l._id === leadId ? { ..._l, scoring: result } : _l))
+  }, [])
 
   const confirmDelete = async () => {
     if (!deleting) return
@@ -114,6 +120,7 @@ export default function Leads (props?: LeadsProps) {
             onRefresh={loadLeads}
             onEdit={setEditing}
             onDelete={setDeleting}
+            onScore={setScoring}
           />
         </div>
       </div>
@@ -141,6 +148,8 @@ export default function Leads (props?: LeadsProps) {
           }
         </SheetContent>
       </Sheet>
+
+      <ScoringDialog lead={scoring} onClose={() => setScoring(null)} onScored={onScored} />
 
       <Dialog open={!!deleting} onOpenChange={(open) => !open && !removing && setDeleting(null)}>
         <DialogContent className="sm:max-w-md">

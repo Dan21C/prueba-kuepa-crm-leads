@@ -71,6 +71,12 @@ class LeadController {
     return responseUtility.build(res, response)
   }
 
+  public score = async(req: Request, res: Response) => {
+    const _params = { ...this.params(req), _id: req.params._id }
+    const response = await this.service.score(_params)
+    return responseUtility.build(res, response)
+  }
+
   public list = async(req: Request, res: Response) => {
     const _params = this.params(req)
     const response = await this.service.list(_params)

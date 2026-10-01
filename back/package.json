@@ -7,7 +7,7 @@
     "dev": "nodemon -r tsconfig-paths/register --watch src src/app/server.ts",
     "cli": "ts-node -r tsconfig-paths/register src/client/client.ts",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "ts-node -r tsconfig-paths/register src/app/domains/lead/leadValidation.test.ts"
+    "test": "ts-node -r tsconfig-paths/register src/tests.ts"
   },
   "keywords": [
     "crm",

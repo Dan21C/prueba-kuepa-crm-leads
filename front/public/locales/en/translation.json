@@ -115,7 +115,8 @@
         "save": "Save changes",
         "saving": "Saving...",
         "edit": "Edit",
-        "delete": "Delete"
+        "delete": "Delete",
+        "score": "Analyze feasibility"
       },
       "toast": {
         "success_title": "Lead registered",
@@ -165,6 +166,47 @@
       "delete": {
         "title": "Delete this lead?",
         "description": "Lead #{{id}} for {{name}} will be deleted. The contact stays in the CRM so its history is kept."
+      },
+      "scoring": {
+        "title": "Lead feasibility",
+        "description": "Likelihood that {{name}} enrolls in {{program}}.",
+        "analyzing": "Analyzing the lead...",
+        "error": "Feasibility could not be calculated. Please try again.",
+        "gauge_label": "Feasibility {{score}} out of 100, {{level}}",
+        "levels": {
+          "high": "High priority",
+          "medium": "Medium priority",
+          "low": "Low priority"
+        },
+        "rules_summary": {
+          "high": "It shows the signals of a lead likely to enroll.",
+          "medium": "It shows interest, but lacks signals to prioritize it.",
+          "low": "For now it has few signals that it will enroll."
+        },
+        "engine_rules": "Calculated with rules",
+        "engine_openai": "AI analysis ({{model}}) · rules: {{rule}}",
+        "next_action": "Recommended next action",
+        "next": {
+          "call_today": "Call today and schedule enrollment.",
+          "follow_up": "Send the program information and follow up in 48 hours.",
+          "nurture": "Nurture with program content and validate interest before investing more time.",
+          "enrolled": "Already enrolled: support the start of classes.",
+          "closed": "Closed lead: only reopen if the contact shows interest again."
+        },
+        "factors_title": "What drives the score",
+        "factors": {
+          "source": "Source",
+          "channels": "Channels",
+          "notes": "Notes",
+          "recency": "Recency",
+          "history": "History",
+          "status": "Status"
+        },
+        "strengths": "In favor",
+        "risks": "Risks",
+        "ai_hint": "Set OPENAI_API_KEY in the back to add an AI-written analysis.",
+        "recalculate": "Recalculate",
+        "chip_title": "View feasibility"
       }
     }
   }
