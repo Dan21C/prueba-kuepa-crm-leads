@@ -4,11 +4,11 @@
 
 // @import_models
 import { Lead, Campaign, Third, Adnetwork, Tracking, Message, Interaction, Program } from "@app/models"
-import { LEAD_OPEN_STATUSES } from "@app/models/leadModel"
+import { LEAD_OPEN_STATUSES, LEAD_STATUSES } from "@app/models/leadModel"
 
 // @import_utilities
 import { responseUtility } from "@core/utilities/responseUtility"
-import { normalizeLead, validateLead, ILeadCreateParams } from "@app/domains/lead/leadValidation"
+import { normalizeLead, validateLead, ILeadCreateParams, LeadFieldErrors, OBJECT_ID_REGEX } from "@app/domains/lead/leadValidation"
 import moment from "moment";
 
 // @import_types
@@ -185,14 +185,105 @@ class LeadService {
     }
   }
 
-  private async findContact (data: Partial<ILeadCreateParams>) {
+  /**
+  * Edita el lead y los datos de su contacto (Third).
+  * Los datos personales se actualizan en el Third porque pertenecen a la persona, no al lead.
+  */
+  public async update (_params) {
+    try{
+      if(!OBJECT_ID_REGEX.test(`${_params._id || ''}`)) return responseUtility.error('lead.not_found', null, { code: 404 })
+      const lead = await Lead.findOne({_id: _params._id}).lean()
+      if(!lead) return responseUtility.error('lead.not_found', null, { code: 404 })
+
+      const data = normalizeLead(_params)
+      const status = `${_params.status || lead.status}`
+      const fields: LeadFieldErrors & { status?: string } = validateLead(data)
+      if(!LEAD_STATUSES.includes(status as any)) fields.status = 'invalid'
+      if(Object.keys(fields).length){
+        return responseUtility.error('lead.invalid_params', null, { fields })
+      }
+
+      const program = await Program.findOne({_id: data.interestProgram}).lean()
+      if(!program){
+        return responseUtility.error('program.not_found', null, { fields: { interestProgram: 'not_found' } })
+      }
+
+      // Los nuevos datos de contacto no pueden pertenecer a otra persona ya registrada
+      const conflict = await this.findContact(data, lead.contact)
+      if(conflict){
+        const conflict_fields = {}
+        for (const _k of ['document', 'email', 'number']) {
+          if(conflict[_k] && conflict[_k] === data[_k]) conflict_fields[_k] = 'already_exists'
+        }
+        return responseUtility.error('third.already_exists', null, { fields: conflict_fields })
+      }
+
+      // Reabrir un lead no puede dejar dos leads abiertos para el mismo contacto
+      if(LEAD_OPEN_STATUSES.includes(status) && !LEAD_OPEN_STATUSES.includes(lead.status)){
+        const open_lead = await Lead.findOne({contact: lead.contact, _id: {$ne: lead._id}, status: {$in: LEAD_OPEN_STATUSES}}).lean()
+        if(open_lead){
+          return responseUtility.error('lead.already_exists', null, { fields: { status: 'already_exists' }, object: open_lead })
+        }
+      }
+
+      await Third.updateOne({_id: lead.contact}, {$set: {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        document_type: data.document_type,
+        document: data.document,
+        email: data.email,
+        number: data.number,
+      }})
+
+      const updated = await Lead.findOneAndUpdate({_id: lead._id}, {$set: {
+        interestProgram: program._id,
+        source: data.source,
+        notes: data.notes,
+        status,
+      }}, {new: true})
+      .populate(LEAD_POPULATE)
+      .lean()
+
+      return responseUtility.success({
+        object: updated
+      })
+    } catch (error) {
+      console.log('error', error)
+      return responseUtility.error('server.error', null, { code: 500 })
+    }
+  }
+
+  /**
+  * Borrado lógico (mongoose-delete): el lead deja de aparecer pero se conserva el historial.
+  * El contacto (Third) no se borra porque puede tener otros leads o interacciones.
+  */
+  public async delete (_params:{_id:string}) {
+    try{
+      if(!OBJECT_ID_REGEX.test(`${_params._id || ''}`)) return responseUtility.error('lead.not_found', null, { code: 404 })
+      const lead = await Lead.findOne({_id: _params._id}).select('_id').lean()
+      if(!lead) return responseUtility.error('lead.not_found', null, { code: 404 })
+
+      await Lead.delete({_id: lead._id})
+
+      return responseUtility.success({
+        deleted: true
+      })
+    } catch (error) {
+      console.log('error', error)
+      return responseUtility.error('server.error', null, { code: 500 })
+    }
+  }
+
+  private async findContact (data: Partial<ILeadCreateParams>, exclude?: string) {
     const or = []
     if(data.document) or.push({ document: data.document })
     if(data.email) or.push({ email: data.email })
     if(data.number) or.push({ number: data.number })
     if(!or.length) return null
 
-    return await Third.findOne({ type: 'cli', $or: or }).lean()
+    const where: any = { type: 'cli', $or: or }
+    if(exclude) where._id = { $ne: exclude }
+    return await Third.findOne(where).lean()
   }
 
   private async nextIncremental () {

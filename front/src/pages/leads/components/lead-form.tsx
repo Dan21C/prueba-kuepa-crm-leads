@@ -1,7 +1,7 @@
 import { FormEvent, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { CalendarDays, Globe, LoaderCircle, PenLine, Share2, UserRoundCheck, Users } from "lucide-react"
-import { CheckContactResponse, Lead, LeadPayload, LeadSource, leadService } from "@/services/leadService"
+import { CheckContactResponse, Lead, LeadPayload, LeadSource, LeadStatus, leadService } from "@/services/leadService"
 import { Program } from "@/services/programService"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -28,6 +28,7 @@ const SOURCES: Array<{ value: LeadSource, icon: typeof Globe }> = [
   { value: 'event', icon: CalendarDays },
   { value: 'social', icon: Share2 },
 ]
+const STATUSES: LeadStatus[] = ['active', 'grading', 'sold', 'dropped', 'inactive']
 const SECTIONS: LeadField[][] = [
   ['first_name', 'last_name', 'document_type', 'document'],
   ['email', 'number'],
@@ -37,14 +38,32 @@ const SECTIONS: LeadField[][] = [
 export interface LeadFormProps {
   programs: Program[]
   programsLoading: boolean
-  onCreated: (lead: Lead) => void
+  /** Si llega un lead, el formulario trabaja en modo edición */
+  lead?: Lead | null
+  onSaved: (lead: Lead) => void
+  onCancel?: () => void
+  className?: string
 }
 
-export function LeadForm ({ programs, programsLoading, onCreated }: LeadFormProps) {
+const fromLead = (lead: Lead): LeadPayload => ({
+  first_name: lead.contact?.first_name || '',
+  last_name: lead.contact?.last_name || '',
+  document_type: lead.contact?.document_type || 'cc',
+  document: lead.contact?.document || '',
+  email: lead.contact?.email || '',
+  number: lead.contact?.number || '',
+  interestProgram: lead.interestProgram?._id || '',
+  source: lead.source || 'manual',
+  notes: lead.notes || '',
+})
+
+export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, className }: LeadFormProps) {
   const { t } = useTranslation()
   const { toast } = useToast()
+  const editing = !!lead
 
-  const [values, setValues] = useState<LeadPayload>(emptyLead)
+  const [values, setValues] = useState<LeadPayload>(() => lead ? fromLead(lead) : emptyLead())
+  const [status, setStatus] = useState<LeadStatus>(lead?.status || 'active')
   const [errors, setErrors] = useState<FieldErrors>({})
   const [touched, setTouched] = useState<Partial<Record<LeadField, boolean>>>({})
   const [submitting, setSubmitting] = useState(false)
@@ -98,7 +117,9 @@ export function LeadForm ({ programs, programsLoading, onCreated }: LeadFormProp
     const request = ++checkRequest.current
     const response = await leadService.checkContact(params)
     if (request !== checkRequest.current || response?.code !== 200) return
-    setDuplicate(response.exists ? response : null)
+    // En edición, encontrarse a sí mismo no es un duplicado
+    const self = editing && response.contact?._id === lead?.contact?._id
+    setDuplicate(response.exists && !self ? response : null)
   }
 
   const blur = (field: LeadField) => {
@@ -108,7 +129,8 @@ export function LeadForm ({ programs, programsLoading, onCreated }: LeadFormProp
   }
 
   const reset = () => {
-    setValues(emptyLead())
+    setValues(lead ? fromLead(lead) : emptyLead())
+    setStatus(lead?.status || 'active')
     setErrors({})
     setTouched({})
     setDuplicate(null)
@@ -129,20 +151,24 @@ export function LeadForm ({ programs, programsLoading, onCreated }: LeadFormProp
     if (Object.keys(fieldErrors).length) return focusFirstError(fieldErrors)
 
     setSubmitting(true)
-    const response = await leadService.create({
+    const payload = {
       ...values,
       document: normalizeDocument(values.document),
       number: normalizeNumber(values.number),
-    })
+    }
+    const response = lead
+      ? await leadService.update(lead._id, { ...payload, status })
+      : await leadService.create(payload)
     setSubmitting(false)
 
     if (response?.code === 201 || response?.code === 200) {
+      const mode = editing ? 'updated' : 'success'
       toast({
-        title: t('leads.form.toast.success_title'),
-        description: t('leads.form.toast.success_description', { name: response.object?.contact?.first_name, id: response.object?.incremental }),
+        title: t(`leads.form.toast.${mode}_title`),
+        description: t(`leads.form.toast.${mode}_description`, { name: response.object?.contact?.first_name, id: response.object?.incremental }),
       })
-      reset()
-      onCreated(response.object)
+      if (!editing) reset()
+      onSaved(response.object)
       return
     }
 
@@ -150,7 +176,7 @@ export function LeadForm ({ programs, programsLoading, onCreated }: LeadFormProp
       setErrors((current) => ({ ...current, ...response.fields }))
       focusFirstError(response.fields)
     }
-    if (response?.code === 409 && response.object) {
+    if (response?.message === 'lead.already_exists' && response.object && !editing) {
       setDuplicate({ exists: true, contact: response.object.contact, lead: response.object })
     }
 
@@ -162,7 +188,7 @@ export function LeadForm ({ programs, programsLoading, onCreated }: LeadFormProp
   }
 
   return (
-    <Card className="shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both">
+    <Card className={cn("shadow-sm animate-in fade-in slide-in-from-bottom-2 duration-500 fill-mode-both", className)}>
       <CardContent className="p-4 md:p-6">
         <div className="mb-6 flex flex-col gap-2">
           <div className="flex items-center justify-between text-xs text-slate-500">
@@ -362,6 +388,45 @@ export function LeadForm ({ programs, programsLoading, onCreated }: LeadFormProp
               </ToggleGroup>
             </div>
 
+            {
+              editing ?
+                <div className="flex flex-col gap-1.5">
+                  <span id="lead-status-label" className="text-sm font-medium leading-none text-slate-700">{t('leads.form.fields.status')}</span>
+                  <ToggleGroup
+                    type="single"
+                    aria-labelledby="lead-status-label"
+                    aria-describedby={errors.status ? fieldErrorId('lead-status') : undefined}
+                    value={status}
+                    onValueChange={(value) => {
+                      if (!value) return
+                      setStatus(value as LeadStatus)
+                      setErrors((current) => ({ ...current, status: undefined }))
+                    }}
+                    className="flex-wrap justify-start"
+                  >
+                    {STATUSES.map((value) => (
+                      <ToggleGroupItem
+                        key={value}
+                        value={value}
+                        variant="outline"
+                        size="sm"
+                        className="px-3 transition-all data-[state=on]:border-purple-600 data-[state=on]:bg-purple-100 data-[state=on]:text-purple-900"
+                      >
+                        {t(`leads.form.status.${value}`)}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                  {
+                    errors.status ?
+                      <p id={fieldErrorId('lead-status')} role="alert" className="text-xs text-rose-600 animate-in fade-in slide-in-from-top-1 duration-200">
+                        {message('status')}
+                      </p>
+                    : null
+                  }
+                </div>
+              : null
+            }
+
             <FormField id="lead-notes" label={t('leads.form.fields.notes')} error={message('notes')}>
               <Textarea
                 {...a11y('notes')}
@@ -378,12 +443,15 @@ export function LeadForm ({ programs, programsLoading, onCreated }: LeadFormProp
           </FormSection>
 
           <div className="flex flex-col-reverse gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:justify-end">
-            <Button type="button" variant="ghost" accent="purple" onClick={reset} disabled={submitting}>
-              {t('leads.form.actions.reset')}
+            <Button type="button" variant="ghost" accent="purple" onClick={editing && onCancel ? onCancel : reset} disabled={submitting}>
+              {editing ? t('leads.form.actions.cancel') : t('leads.form.actions.reset')}
             </Button>
             <Button type="submit" tone="purple" disabled={submitting} aria-busy={submitting} className="min-w-40 active:scale-[0.98]">
               {submitting ? <LoaderCircle className="animate-spin" /> : null}
-              {submitting ? t('leads.form.actions.submitting') : t('leads.form.actions.submit')}
+              {
+                submitting ? t(editing ? 'leads.form.actions.saving' : 'leads.form.actions.submitting')
+                : t(editing ? 'leads.form.actions.save' : 'leads.form.actions.submit')
+              }
             </Button>
           </div>
         </form>

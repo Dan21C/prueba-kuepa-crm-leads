@@ -58,6 +58,19 @@ class LeadController {
     return responseUtility.build(res, response)
   }
 
+  public update = async(req: Request, res: Response) => {
+    // El _id de la ruta manda sobre cualquier _id que venga en el body
+    const _params = { ...this.params(req), _id: req.params._id }
+    const response = await this.service.update(_params)
+    return responseUtility.build(res, response)
+  }
+
+  public delete = async(req: Request, res: Response) => {
+    const _params = { ...this.params(req), _id: req.params._id }
+    const response = await this.service.delete(_params)
+    return responseUtility.build(res, response)
+  }
+
   public list = async(req: Request, res: Response) => {
     const _params = this.params(req)
     const response = await this.service.list(_params)

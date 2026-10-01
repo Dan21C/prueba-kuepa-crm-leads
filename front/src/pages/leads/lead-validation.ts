@@ -7,7 +7,7 @@ export const DOCUMENT_REGEX = /^\d{5,12}$/
 export const PASSPORT_REGEX = /^[a-zA-Z0-9]{5,12}$/
 export const NOTES_MAX = 500
 
-export type LeadField = keyof LeadPayload
+export type LeadField = keyof LeadPayload | 'status'
 export type FieldErrors = Partial<Record<LeadField, string>>
 
 export const REQUIRED_FIELDS: LeadField[] = [
@@ -33,7 +33,8 @@ export const normalizeNumber = (value: string) => value.replace(/\D/g, '').slice
 * Valida un campo y devuelve el código de error (required | invalid | too_long) o undefined.
 */
 export const validateField = (field: LeadField, lead: LeadPayload): string | undefined => {
-  const value = typeof lead[field] === 'string' ? lead[field].trim() : ''
+  const raw = field === 'status' ? '' : lead[field]
+  const value = typeof raw === 'string' ? raw.trim() : ''
 
   if (REQUIRED_FIELDS.includes(field) && !value) return 'required'
 
@@ -59,7 +60,7 @@ export const validateField = (field: LeadField, lead: LeadPayload): string | und
 
 export const validateLead = (lead: LeadPayload): FieldErrors => {
   const errors: FieldErrors = {}
-  for (const field of Object.keys(lead) as LeadField[]) {
+  for (const field of Object.keys(lead) as Array<keyof LeadPayload>) {
     const error = validateField(field, lead)
     if (error) errors[field] = error
   }

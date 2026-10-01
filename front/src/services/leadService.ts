@@ -55,6 +55,12 @@ export const leadService = {
   create: async(data: LeadPayload) =>{
     return await post({api: `${api}/create`, options: { data: {...data} }})
   },
+  update: async(_id: string, data: LeadPayload & { status: LeadStatus }) =>{
+    return await post({api: `${api}/update/${_id}`, options: { data: {...data} }})
+  },
+  remove: async(_id: string) =>{
+    return await post({api: `${api}/delete/${_id}`})
+  },
   checkContact: async(params: Partial<Pick<LeadPayload, 'document' | 'email' | 'number'>>) =>{
     return await get({api: `${api}/check-contact`, options: { params }})
   },
