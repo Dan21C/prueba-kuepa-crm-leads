@@ -34,6 +34,7 @@ class LeadRoute {
     { method: 'get', path: '/check-contact', handler: this.controller.checkContact , middleware: [auth] },
     { method: 'post', path: '/update/:_id', handler: this.controller.update , middleware: [auth] },
     { method: 'post', path: '/delete/:_id', handler: this.controller.delete , middleware: [auth] },
+    { method: 'post', path: '/score/:_id', handler: this.controller.score , middleware: [auth] },
     { method: 'post', path: '/test', handler: this.controller.test , middleware: [] },
     { method: 'post', path: '/upsert', handler: this.controller.upsert , middleware: [auth] },
     { method: 'post', path: '/external', handler: this.controller.external , middleware: [] },

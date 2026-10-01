@@ -11,6 +11,21 @@ export const LEAD_SOURCES = ['web', 'manual', 'referral', 'event', 'social'] as 
 export type LeadStatus = typeof LEAD_STATUSES[number]
 export type LeadSource = typeof LEAD_SOURCES[number]
 
+export interface ILeadScoring {
+  score: number;
+  level: 'high' | 'medium' | 'low';
+  engine: 'rules' | 'openai';
+  model?: string;
+  rule_score: number;
+  factors: Array<{ key: string, points: number, max: number }>;
+  summary?: string;
+  strengths?: string[];
+  risks?: string[];
+  next_action?: string;
+  next_action_key: string;
+  evaluated_at: Date;
+}
+
 export interface ILeadTracking {
   tracking: Types.ObjectId;
   description?: string;
@@ -33,6 +48,7 @@ export interface ILead {
   source: LeadSource;
   notes?: string;
   status: LeadStatus;
+  scoring?: ILeadScoring;
   trackings: ILeadTracking[];
   created_at: Date;
   updated_at: Date;
@@ -59,6 +75,27 @@ const LeadSchema = new Schema({
     type: Schema.Types.String,
     enum: LEAD_STATUSES,
     default: 'active'
+  },
+  scoring: {
+    score: {type: Schema.Types.Number, min: 0, max: 100},
+    level: {type: Schema.Types.String, enum: ['high', 'medium', 'low']},
+    engine: {type: Schema.Types.String, enum: ['rules', 'openai']},
+    model: {type: Schema.Types.String},
+    rule_score: {type: Schema.Types.Number},
+    factors: [
+      {
+        _id: false,
+        key: {type: Schema.Types.String},
+        points: {type: Schema.Types.Number},
+        max: {type: Schema.Types.Number},
+      }
+    ],
+    summary: {type: Schema.Types.String},
+    strengths: [{type: Schema.Types.String}],
+    risks: [{type: Schema.Types.String}],
+    next_action: {type: Schema.Types.String},
+    next_action_key: {type: Schema.Types.String},
+    evaluated_at: {type: Schema.Types.Date},
   },
   trackings: [
     {
