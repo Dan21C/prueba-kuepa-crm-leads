@@ -46,6 +46,18 @@ class LeadController {
     return responseUtility.build(res, response)
   }
 
+  public create = async(req: Request, res: Response) => {
+    const _params = this.params(req)
+    const response = await this.service.create(_params)
+    return responseUtility.build(res, response)
+  }
+
+  public checkContact = async(req: Request, res: Response) => {
+    const _params = this.params(req)
+    const response = await this.service.checkContact(_params)
+    return responseUtility.build(res, response)
+  }
+
   public list = async(req: Request, res: Response) => {
     const _params = this.params(req)
     const response = await this.service.list(_params)
