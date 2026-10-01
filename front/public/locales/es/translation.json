@@ -207,6 +207,25 @@
         "ai_hint": "Configura OPENAI_API_KEY en el back para sumar un análisis redactado con IA.",
         "recalculate": "Recalcular",
         "chip_title": "Ver factibilidad"
+      },
+      "coming_soon": {
+        "title": "Lo que viene",
+        "description": "Funciones planeadas para el CRM.",
+        "badge": "Próximamente",
+        "items": {
+          "dashboard": {
+            "title": "Dashboard del CRM",
+            "description": "KPIs, embudo por estado y leads por origen y programa."
+          },
+          "queue": {
+            "title": "A quién contactar",
+            "description": "Leads para llamar hoy y contactos para reactivar como nuevos leads."
+          },
+          "demo": {
+            "title": "Datos de demostración",
+            "description": "Contactos y leads de ejemplo para explorar el CRM."
+          }
+        }
       }
     }
   }
