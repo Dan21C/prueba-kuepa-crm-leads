@@ -11,6 +11,7 @@ import { useToast } from "@/components/hooks/use-toast"
 import { LeadForm } from "./components/lead-form"
 import { RecentLeads } from "./components/recent-leads"
 import { ScoringDialog } from "./components/scoring-dialog"
+import { ComingSoon } from "./components/coming-soon"
 
 export interface LeadsProps {
 }
@@ -111,7 +112,7 @@ export default function Leads (props?: LeadsProps) {
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
         <LeadForm programs={programs} programsLoading={programsLoading} onSaved={onSaved} />
-        <div className="lg:sticky lg:top-0">
+        <div className="flex flex-col gap-6">
           <RecentLeads
             leads={leads}
             loading={leadsLoading}
@@ -122,6 +123,7 @@ export default function Leads (props?: LeadsProps) {
             onDelete={setDeleting}
             onScore={setScoring}
           />
+          <ComingSoon />
         </div>
       </div>
 

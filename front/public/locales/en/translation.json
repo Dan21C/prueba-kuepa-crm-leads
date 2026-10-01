@@ -207,6 +207,25 @@
         "ai_hint": "Set OPENAI_API_KEY in the back to add an AI-written analysis.",
         "recalculate": "Recalculate",
         "chip_title": "View feasibility"
+      },
+      "coming_soon": {
+        "title": "What's next",
+        "description": "Features planned for the CRM.",
+        "badge": "Coming soon",
+        "items": {
+          "dashboard": {
+            "title": "CRM dashboard",
+            "description": "KPIs, status funnel and leads by source and program."
+          },
+          "queue": {
+            "title": "Who to contact",
+            "description": "Leads to call today and contacts to reactivate as new leads."
+          },
+          "demo": {
+            "title": "Demo data",
+            "description": "Sample contacts and leads to explore the CRM."
+          }
+        }
       }
     }
   }
