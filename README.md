@@ -17,6 +17,7 @@ Prueba técnica Full Stack para Kuepa EduTech. Sobre la plantilla del CRM (login
   - Validación en el cliente igual a la del back y aviso de contacto existente.
   - Panel de leads recientes.
   - Textos en español e inglés, y animaciones que respetan `prefers-reduced-motion`.
+  - Acento en el naranja de la marca Kuepa. Se evita el negro como acento por legibilidad, y todas las combinaciones cumplen el contraste AA.
 - **Edición y borrado de leads** desde la tabla. La edición abre un panel lateral que reutiliza el mismo formulario y la misma validación, e incluye el cambio de estado. El borrado es lógico y pide confirmación.
 - **Análisis de factibilidad** (`POST /api/lead/score/:_id`): un score de 0 a 100 de la probabilidad de matrícula, con factores explicables y una siguiente acción recomendada. Si se configura `OPENAI_API_KEY`, se suma un análisis redactado por OpenAI.
 - Corrección de los problemas de la plantilla que impedían que el módulo de leads funcionara (ver más abajo).
@@ -302,12 +303,17 @@ Devuelve los últimos 100 leads con `contact` e `interestProgram` poblados y `fu
 
 ## Flujo de trabajo
 
-- Ramas por feature: `feat/back-leads`, `feat/front-leads-form`, `chore/ci-tests`, `docs/readme`, `feat/seeder-acceso-crm`, `feat/lead-edicion` y `feat/lead-scoring`. Cada una se integra a `main` con `merge --no-ff`, para que el historial muestre cada bloque.
+- Ramas por feature: `feat/back-leads`, `feat/front-leads-form`, `chore/ci-tests`, `docs/readme`, `feat/seeder-acceso-crm`, `feat/lead-edicion`, `feat/lead-scoring` y `style/acento-naranja-kuepa`. Cada una se integra a `main` con `merge --no-ff`, para que el historial muestre cada bloque.
 - Commits atómicos con Conventional Commits en español.
 - **CI** (`.github/workflows/ci.yml`): en cada push a `main` y en cada PR corre el typecheck y las pruebas del back, y el build del front (Node 18, con caché de npm). El `dist` del front queda como artefacto del workflow.
 
 ## Mejoras futuras
 
+- **Dashboard del CRM** en `/crm`, la ruta del grupo "crm" del sidebar, que hoy no tiene página. Mostraría KPIs (leads abiertos, tasa de matrícula, score promedio, nuevos en la semana), el embudo por estado, la distribución por origen y por programa, y los registros por día. Todo con agregaciones de Mongo sobre `Lead`, sin modelos nuevos.
+- **Cola "A quién contactar"** con recomendaciones para el asesor:
+  - *Leads para llamar hoy*: leads abiertos ordenados por el score de reglas, que no consume OpenAI, con el motivo, la siguiente acción y accesos directos a llamada y WhatsApp.
+  - *Contactos para reactivar*: personas en `Third` sin lead abierto cuyo último lead se descartó, quedó inactivo o terminó en matrícula. En este último caso se les ofrecería otro programa. Desde ahí se crearía el lead con el formulario precargado, y la deduplicación ya existente reutiliza el contacto.
+- **Seeder de datos demo** para poblar el dashboard con contactos y leads realistas distribuidos en el tiempo.
 - **Pruebas de integración** de `leadService` contra un Mongo en memoria o en un contenedor de CI, y pruebas de componentes del formulario.
 - **Paginación y filtros** en el listado (estado, programa, asesor, fechas) y búsqueda por nombre o documento.
 - **Reasignación de asesor** desde la edición, y una vista de detalle con el historial de interacciones.
