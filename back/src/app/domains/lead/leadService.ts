@@ -28,13 +28,13 @@ class LeadService {
     try{ 
       if(_params.user){
         const third = await Third.findOne({user: _params.user}).lean()
-        if(!third) return responseUtility.error('third.not_found1');
+        if(!third) return responseUtility.error('third.not_found', null, { code: 404 });
         _params.adviser = third._id
       }
       
       if(_params.third){
         const third = await Third.findOne({_id: _params.third}).lean()
-        if(!third) return responseUtility.error('third.not_found2');
+        if(!third) return responseUtility.error('third.not_found', null, { code: 404 });
         _params.adviser = third._id
       }
       
@@ -70,6 +70,7 @@ class LeadService {
       }
     } catch (error) {
       console.log('error', error)
+      return responseUtility.error('server.error', null, { code: 500 })
     }
   }
   
@@ -258,6 +259,7 @@ class LeadService {
       })
     } catch (error) {
       console.log('error', error)
+      return responseUtility.error('server.error', null, { code: 500 })
     }
   }
   
@@ -382,6 +384,7 @@ class LeadService {
       }
     } catch (error) {
       console.log('error', error)
+      return responseUtility.error('server.error', null, { code: 500 })
     }
   }
   
@@ -399,16 +402,12 @@ class LeadService {
       
       let leads = await Lead.find(where)
       .sort({created_at:-1})
-      .populate({
-        path: 'contact',
-        select: 'first_name last_name document number',
-        options: { lean:true }
-      })
+      .populate(LEAD_POPULATE)
       .limit(100)
       .lean()
       
       leads = leads.map(_l=>{
-        _l.full_name = `${_l.contact?.first_name} ${_l.contact?.last_name}`.trim()
+        _l.full_name = `${_l.contact?.first_name || ''} ${_l.contact?.last_name || ''}`.trim()
         return _l
       })
       
@@ -417,6 +416,7 @@ class LeadService {
       })
     } catch (error) {
       console.log('error', error)
+      return responseUtility.error('server.error', null, { code: 500 })
     }
   }
   
@@ -425,6 +425,7 @@ class LeadService {
       
     } catch (error) {
       console.log('error', error)
+      return responseUtility.error('server.error', null, { code: 500 })
     }
   }
   
@@ -440,14 +441,14 @@ class LeadService {
       })
       .lean()
       
-      if(!lead) return responseUtility.error('lead.not_found');
+      if(!lead) return responseUtility.error('lead.not_found', null, { code: 404 });
       const interactions = await Interaction.find({'_ref.lead': _params._id})
       .populate({
         path: 'messages',
         select: 'inbound from to content created_at',
         options: { lean:true }
       })
-      .sort({crated_at:-1})
+      .sort({created_at:-1})
       .lean()
       return responseUtility.success({
         lead,
@@ -456,6 +457,7 @@ class LeadService {
       
     } catch (error) {
       console.log('error', error)
+      return responseUtility.error('server.error', null, { code: 500 })
     }
   }
 }
