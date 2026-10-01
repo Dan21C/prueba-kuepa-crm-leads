@@ -115,7 +115,8 @@
         "save": "Guardar cambios",
         "saving": "Guardando...",
         "edit": "Editar",
-        "delete": "Eliminar"
+        "delete": "Eliminar",
+        "score": "Analizar factibilidad"
       },
       "toast": {
         "success_title": "Lead registrado",
@@ -165,6 +166,47 @@
       "delete": {
         "title": "¿Eliminar este lead?",
         "description": "Se eliminará el lead #{{id}} de {{name}}. El contacto se conserva en el CRM para no perder su historial."
+      },
+      "scoring": {
+        "title": "Factibilidad del lead",
+        "description": "Probabilidad de que {{name}} se matricule en {{program}}.",
+        "analyzing": "Analizando el lead...",
+        "error": "No se pudo calcular la factibilidad. Intenta de nuevo.",
+        "gauge_label": "Factibilidad {{score}} de 100, prioridad {{level}}",
+        "levels": {
+          "high": "Prioridad alta",
+          "medium": "Prioridad media",
+          "low": "Prioridad baja"
+        },
+        "rules_summary": {
+          "high": "Tiene las señales de un lead con alta probabilidad de matrícula.",
+          "medium": "Muestra interés, pero le faltan señales para priorizarlo.",
+          "low": "Por ahora tiene pocas señales de que vaya a matricularse."
+        },
+        "engine_rules": "Calculado con reglas",
+        "engine_openai": "Análisis con IA ({{model}}) · reglas: {{rule}}",
+        "next_action": "Siguiente acción recomendada",
+        "next": {
+          "call_today": "Llamar hoy y agendar la matrícula.",
+          "follow_up": "Enviar la información del programa y hacer seguimiento en 48 horas.",
+          "nurture": "Nutrir con contenido del programa y validar el interés antes de invertir más tiempo.",
+          "enrolled": "Ya está matriculado: acompañar el inicio de clases.",
+          "closed": "Lead cerrado: solo reabrir si el contacto vuelve a mostrar interés."
+        },
+        "factors_title": "Qué influye en el score",
+        "factors": {
+          "source": "Origen",
+          "channels": "Canales",
+          "notes": "Notas",
+          "recency": "Recencia",
+          "history": "Historial",
+          "status": "Estado"
+        },
+        "strengths": "A favor",
+        "risks": "Riesgos",
+        "ai_hint": "Configura OPENAI_API_KEY en el back para sumar un análisis redactado con IA.",
+        "recalculate": "Recalcular",
+        "chip_title": "Ver factibilidad"
       }
     }
   }
