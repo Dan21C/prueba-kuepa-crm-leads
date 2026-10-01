@@ -32,8 +32,7 @@ docker compose up -d
 cd back
 cp .env.example .env          # ajusta MONGO_URI / JWT_SECRET si hace falta
 npm i
-npm run cli -- --seeder initSeeder -f      # usuario de prueba
-npm run cli -- --seeder programSeeder -f   # programas académicos
+npm run cli -- --seeder initSeeder -f      # usuario, rol, asesor y programas
 npm run dev                                # http://localhost:7001
 
 # 3. Front (otra terminal)
@@ -42,13 +41,15 @@ npm i
 npm run dev                                # http://localhost:5173
 ```
 
+`initSeeder` deja todo listo con el comando que indica la prueba: crea el usuario, el rol `Asesor` con los permisos del CRM (`sidebar:crm`, `sidebar:leads`, `crm:leads`), el `Third` del asesor asociado al usuario y el catálogo de programas, que delega en `programSeeder`. Es idempotente, así que se puede correr varias veces con `-f`. `programSeeder` también se puede ejecutar por separado.
+
 **Credenciales de prueba** (las crea `initSeeder`):
 
 | Usuario | Contraseña |
 |---|---|
 | `useradminket` | `ket#2025` |
 
-Después de iniciar sesión, entra a **`/leads`**.
+Después de iniciar sesión, entra a **CRM → Contactos** en el sidebar, o directamente a **`/leads`**.
 
 **Variables de entorno del back** (`back/.env`). Todas tienen como respaldo el valor que tenía la plantilla, así que el proyecto funciona sin `.env`:
 
@@ -111,7 +112,7 @@ Si el contacto ya tiene un lead en estado `active` o `grading`, la API responde 
 
 ### Asignación de asesor
 
-El asesor (`adviser`) es el `Third` asociado al usuario logueado (`Third.user = user._id`). `initSeeder` crea el usuario de prueba **sin** un `Third` asociado, así que en ese caso el lead se crea sin asesor en lugar de fallar. Por la misma razón, `list` solo filtra por asesor cuando ese `Third` existe. La asignación balanceada por campaña queda como mejora futura; el `TODO: Balance` del servicio `external` ya la anticipa.
+El asesor (`adviser`) es el `Third` asociado al usuario logueado (`Third.user = user._id`). La plantilla original creaba el usuario de prueba **sin** ese `Third`. Ahora `initSeeder` lo crea con `type: 'emp'`, pero el servicio sigue siendo tolerante: si un usuario no tiene `Third`, el lead se crea sin asesor en lugar de fallar, y `list` solo filtra por asesor cuando ese `Third` existe. La asignación balanceada por campaña queda como mejora futura; el `TODO: Balance` del servicio `external` ya la anticipa.
 
 ## Problemas encontrados en la plantilla y cómo se resolvieron
 
@@ -131,6 +132,7 @@ El asesor (`adviser`) es el `Third` asociado al usuario logueado (`Third.user = 
    - El sidebar apuntaba a `/crm/leads` en lugar de `/leads`.
    - URI de Mongo y JWT quemados en el código; ahora salen de `.env`.
    - `.env` no estaba en `.gitignore`.
+   - `initSeeder` creaba el usuario con `roles: []`. El sidebar exige los permisos `sidebar:crm` y `crm:leads`, así que el módulo de leads no aparecía tras el login. Ahora el seeder crea el rol con esos permisos, el `Third` del asesor y los programas.
    - `attachmentUtility.ts` importa `@aws-sdk/*`, que no está instalado. No lo usa nadie y se excluyó del `typecheck`.
 
 ## Endpoints nuevos
