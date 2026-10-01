@@ -100,7 +100,7 @@ export function ScoringDialog ({ lead, onClose, onScored }: ScoringDialogProps) 
     <Dialog open={!!lead} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2 font-title text-xl text-purple-800">
+          <DialogTitle className="flex items-center gap-2 font-title text-xl text-orange-800">
             <Target className="h-5 w-5" />
             {t('leads.form.scoring.title')}
           </DialogTitle>
@@ -132,7 +132,7 @@ export function ScoringDialog ({ lead, onClose, onScored }: ScoringDialogProps) 
                     {scoring.summary || t(`leads.form.scoring.rules_summary.${scoring.level}`)}
                   </p>
                   <span className="inline-flex items-center gap-1 text-xs text-slate-500">
-                    {scoring.engine === 'openai' ? <Sparkles className="h-3.5 w-3.5 text-purple-600" /> : null}
+                    {scoring.engine === 'openai' ? <Sparkles className="h-3.5 w-3.5 text-orange-600" /> : null}
                     {
                       scoring.engine === 'openai'
                         ? t('leads.form.scoring.engine_openai', { model: scoring.model, rule: scoring.rule_score })
@@ -144,9 +144,9 @@ export function ScoringDialog ({ lead, onClose, onScored }: ScoringDialogProps) 
                 </div>
               </div>
 
-              <div className="rounded-lg border border-purple-200 bg-purple-50 p-3">
-                <p className="text-xs font-medium uppercase tracking-wide text-purple-700">{t('leads.form.scoring.next_action')}</p>
-                <p className="mt-1 text-sm font-medium text-purple-950">
+              <div className="rounded-lg border border-orange-200 bg-orange-50 p-3">
+                <p className="text-xs font-medium uppercase tracking-wide text-orange-700">{t('leads.form.scoring.next_action')}</p>
+                <p className="mt-1 text-sm font-medium text-orange-950">
                   {scoring.next_action || t(`leads.form.scoring.next.${scoring.next_action_key}`)}
                 </p>
               </div>
@@ -197,7 +197,7 @@ export function ScoringDialog ({ lead, onClose, onScored }: ScoringDialogProps) 
               }
 
               <div className="flex justify-end border-t border-slate-100 pt-3">
-                <Button type="button" variant="ghost" accent="purple" onClick={() => lead && analyze(lead)} disabled={loading}>
+                <Button type="button" variant="ghost" accent="orange" onClick={() => lead && analyze(lead)} disabled={loading}>
                   {loading ? <LoaderCircle className="animate-spin" /> : <RefreshCw />}
                   {t('leads.form.scoring.recalculate')}
                 </Button>

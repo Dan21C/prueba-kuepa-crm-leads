@@ -13,6 +13,8 @@ const alertVariants = cva(
           "border-destructive/50 text-destructive [&>svg]:text-destructive",
         purple:
           "border-purple-600/50",
+        orange:
+          "border-orange-600/50",
         sky:
           "border-sky-600/50",
       },
