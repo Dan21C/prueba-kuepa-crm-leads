@@ -1,3 +1,120 @@
 {
-  
+  "leads": {
+    "form": {
+      "title": "Lead registration",
+      "subtitle": "Register people interested in our programs. If the contact already exists, we reuse their data instead of duplicating it.",
+      "progress": "Required fields completed",
+      "sections": {
+        "personal": { "title": "Personal details", "description": "Their name and how they identify." },
+        "contact": { "title": "Contact", "description": "How the adviser will reach them." },
+        "program": { "title": "Program of interest", "description": "What they want to study and how they found Kuepa." }
+      },
+      "fields": {
+        "first_name": "First names",
+        "last_name": "Last names",
+        "document_type": "Document type",
+        "document": "Document number",
+        "email": "Email",
+        "number": "Mobile",
+        "notes": "Notes (optional)"
+      },
+      "placeholders": {
+        "first_name": "e.g. Ana María",
+        "last_name": "e.g. Pérez Gómez",
+        "document_type": "Select",
+        "document": "e.g. 1020304050",
+        "email": "name@email.com",
+        "number": "300 123 4567",
+        "notes": "Preferred contact time, questions, context..."
+      },
+      "hints": {
+        "document": "Numbers only, 5 to 12 digits.",
+        "passport": "Letters and numbers, 5 to 12 characters.",
+        "number": "10 digits, starts with 3."
+      },
+      "document_types": {
+        "cc": "Citizenship ID",
+        "ti": "Identity card",
+        "pp": "Passport",
+        "nt": "Tax ID (NIT)"
+      },
+      "program": {
+        "label": "Program",
+        "empty": "No programs available. Run the programSeeder seeder in the back."
+      },
+      "source": {
+        "label": "How did the lead arrive?",
+        "options": {
+          "manual": "Manual",
+          "web": "Website",
+          "referral": "Referral",
+          "event": "Event",
+          "social": "Social media"
+        }
+      },
+      "status": {
+        "active": "Active",
+        "grading": "Grading",
+        "sold": "Enrolled",
+        "dropped": "Dropped",
+        "inactive": "Inactive"
+      },
+      "errors": {
+        "required": "This field is required.",
+        "invalid": "The value is not valid.",
+        "too_long": "It is too long.",
+        "not_found": "It does not exist.",
+        "document": { "invalid": "Check the document: numbers only (5 to 12 digits), or alphanumeric for passports." },
+        "email": { "invalid": "Enter a valid email, e.g. name@email.com." },
+        "number": { "invalid": "It must have 10 digits and start with 3." },
+        "first_name": { "too_long": "Maximum 60 characters." },
+        "last_name": { "too_long": "Maximum 60 characters." },
+        "notes": { "too_long": "Maximum 500 characters." },
+        "interestProgram": {
+          "required": "Select the program of interest.",
+          "not_found": "The program is no longer available. Pick another one."
+        }
+      },
+      "duplicate": {
+        "title": "This contact is already registered",
+        "reuse": "{{name}} already exists in the CRM. The lead will be linked to that contact instead of creating a new one.",
+        "active_lead": "{{name}} already has an active lead (#{{id}} · {{program}}), so another one cannot be created until it is closed."
+      },
+      "actions": {
+        "submit": "Register lead",
+        "submitting": "Registering...",
+        "reset": "Clear"
+      },
+      "toast": {
+        "success_title": "Lead registered",
+        "success_description": "Lead #{{id}} for {{name}} was registered.",
+        "error_title": "The lead could not be registered"
+      },
+      "api": {
+        "network": "Cannot reach the server. Please try again.",
+        "lead": {
+          "invalid_params": "Some fields have errors. Review them and try again.",
+          "already_exists": "This contact already has an active lead; another one cannot be created."
+        },
+        "program": {
+          "not_found": "The selected program does not exist or is inactive."
+        },
+        "server": {
+          "error": "Something went wrong. Please try again."
+        }
+      },
+      "recent": {
+        "title": "Recent leads",
+        "description": "The latest ones registered in the CRM.",
+        "refresh": "Refresh",
+        "loading": "Loading leads",
+        "empty_title": "No leads yet",
+        "empty_description": "Register the first one with the form and it will show up here.",
+        "name": "Name",
+        "program": "Program",
+        "status": "Status",
+        "date": "Date"
+      }
+    }
+  }
 }
