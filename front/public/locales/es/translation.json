@@ -1,3 +1,120 @@
 {
-  
+  "leads": {
+    "form": {
+      "title": "Registro de leads",
+      "subtitle": "Registra a las personas interesadas en nuestros programas. Si el contacto ya existe, reutilizamos sus datos para no duplicarlo.",
+      "progress": "Campos obligatorios completados",
+      "sections": {
+        "personal": { "title": "Datos personales", "description": "Cómo se llama y cómo se identifica." },
+        "contact": { "title": "Contacto", "description": "Por dónde lo va a contactar el asesor." },
+        "program": { "title": "Programa de interés", "description": "Qué quiere estudiar y cómo llegó a Kuepa." }
+      },
+      "fields": {
+        "first_name": "Nombres",
+        "last_name": "Apellidos",
+        "document_type": "Tipo de documento",
+        "document": "Número de documento",
+        "email": "Correo electrónico",
+        "number": "Celular",
+        "notes": "Notas (opcional)"
+      },
+      "placeholders": {
+        "first_name": "Ej: Ana María",
+        "last_name": "Ej: Pérez Gómez",
+        "document_type": "Selecciona",
+        "document": "Ej: 1020304050",
+        "email": "nombre@correo.com",
+        "number": "300 123 4567",
+        "notes": "Horario preferido de contacto, dudas, contexto..."
+      },
+      "hints": {
+        "document": "Solo números, entre 5 y 12 dígitos.",
+        "passport": "Letras y números, entre 5 y 12 caracteres.",
+        "number": "10 dígitos, empieza por 3."
+      },
+      "document_types": {
+        "cc": "Cédula de ciudadanía",
+        "ti": "Tarjeta de identidad",
+        "pp": "Pasaporte",
+        "nt": "NIT"
+      },
+      "program": {
+        "label": "Programa",
+        "empty": "No hay programas disponibles. Ejecuta el seeder programSeeder en el back."
+      },
+      "source": {
+        "label": "¿Cómo llegó el lead?",
+        "options": {
+          "manual": "Manual",
+          "web": "Sitio web",
+          "referral": "Referido",
+          "event": "Evento",
+          "social": "Redes sociales"
+        }
+      },
+      "status": {
+        "active": "Activo",
+        "grading": "En calificación",
+        "sold": "Matriculado",
+        "dropped": "Descartado",
+        "inactive": "Inactivo"
+      },
+      "errors": {
+        "required": "Este campo es obligatorio.",
+        "invalid": "El valor no es válido.",
+        "too_long": "Es demasiado largo.",
+        "not_found": "No existe.",
+        "document": { "invalid": "Revisa el documento: solo números (5 a 12 dígitos), o alfanumérico si es pasaporte." },
+        "email": { "invalid": "Escribe un correo válido, por ejemplo nombre@correo.com." },
+        "number": { "invalid": "Debe tener 10 dígitos y empezar por 3." },
+        "first_name": { "too_long": "Máximo 60 caracteres." },
+        "last_name": { "too_long": "Máximo 60 caracteres." },
+        "notes": { "too_long": "Máximo 500 caracteres." },
+        "interestProgram": {
+          "required": "Selecciona el programa de interés.",
+          "not_found": "El programa ya no está disponible. Selecciona otro."
+        }
+      },
+      "duplicate": {
+        "title": "Este contacto ya está registrado",
+        "reuse": "{{name}} ya existe en el CRM. Al registrar, el lead se asociará a ese contacto en lugar de crear uno nuevo.",
+        "active_lead": "{{name}} ya tiene un lead activo (#{{id}} · {{program}}), así que no se podrá crear otro hasta que se cierre."
+      },
+      "actions": {
+        "submit": "Registrar lead",
+        "submitting": "Registrando...",
+        "reset": "Limpiar"
+      },
+      "toast": {
+        "success_title": "Lead registrado",
+        "success_description": "Se registró el lead #{{id}} de {{name}}.",
+        "error_title": "No se pudo registrar el lead"
+      },
+      "api": {
+        "network": "No hay conexión con el servidor. Intenta de nuevo.",
+        "lead": {
+          "invalid_params": "Hay campos con errores. Revísalos e intenta de nuevo.",
+          "already_exists": "Este contacto ya tiene un lead activo; no se puede crear otro."
+        },
+        "program": {
+          "not_found": "El programa seleccionado no existe o está inactivo."
+        },
+        "server": {
+          "error": "Ocurrió un error inesperado. Intenta de nuevo."
+        }
+      },
+      "recent": {
+        "title": "Leads recientes",
+        "description": "Los últimos registrados en el CRM.",
+        "refresh": "Actualizar",
+        "loading": "Cargando leads",
+        "empty_title": "Aún no hay leads",
+        "empty_description": "Registra el primero con el formulario y aparecerá aquí.",
+        "name": "Nombre",
+        "program": "Programa",
+        "status": "Estado",
+        "date": "Fecha"
+      }
+    }
+  }
 }
