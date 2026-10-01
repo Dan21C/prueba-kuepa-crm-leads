@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next"
 import moment from "moment"
-import 'moment/locale/es'
+// Vite resuelve moment a su build ESM (jsnext:main); el idioma debe registrarse sobre esa misma instancia
+import 'moment/dist/locale/es'
 import { Inbox, MoreHorizontal, Pencil, RefreshCw, Target, Trash2 } from "lucide-react"
 import { Lead, LeadStatus } from "@/services/leadService"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
