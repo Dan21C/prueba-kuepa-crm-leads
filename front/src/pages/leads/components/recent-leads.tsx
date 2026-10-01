@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next"
 import moment from "moment"
 import 'moment/locale/es'
-import { Inbox, MoreHorizontal, Pencil, RefreshCw, Trash2 } from "lucide-react"
+import { Inbox, MoreHorizontal, Pencil, RefreshCw, Target, Trash2 } from "lucide-react"
 import { Lead, LeadStatus } from "@/services/leadService"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { LEVEL_STYLES } from "./scoring-dialog"
 
 const STATUS_STYLES: Record<LeadStatus, string> = {
   active: 'bg-purple-50 text-purple-800 ring-purple-600/20',
@@ -26,9 +27,10 @@ export interface RecentLeadsProps {
   onRefresh: () => void
   onEdit: (lead: Lead) => void
   onDelete: (lead: Lead) => void
+  onScore: (lead: Lead) => void
 }
 
-export function RecentLeads ({ leads, loading, highlightId, removingId, onRefresh, onEdit, onDelete }: RecentLeadsProps) {
+export function RecentLeads ({ leads, loading, highlightId, removingId, onRefresh, onEdit, onDelete, onScore }: RecentLeadsProps) {
   const { t, i18n } = useTranslation()
   const locale = i18n.language?.startsWith('en') ? 'en' : 'es'
 
@@ -99,9 +101,27 @@ export function RecentLeads ({ leads, loading, highlightId, removingId, onRefres
                       {lead.interestProgram?.name || '—'}
                     </TableCell>
                     <TableCell className="py-2">
-                      <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset", STATUS_STYLES[lead.status] || STATUS_STYLES.inactive)}>
-                        {t(`leads.form.status.${lead.status}`)}
-                      </span>
+                      <div className="flex flex-col items-start gap-1">
+                        <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ring-1 ring-inset", STATUS_STYLES[lead.status] || STATUS_STYLES.inactive)}>
+                          {t(`leads.form.status.${lead.status}`)}
+                        </span>
+                        {
+                          lead.scoring ?
+                            <button
+                              type="button"
+                              onClick={() => onScore(lead)}
+                              title={t('leads.form.scoring.chip_title')}
+                              className={cn(
+                                "inline-flex items-center gap-1 rounded-full px-1.5 py-0 text-[11px] font-medium tabular-nums ring-1 ring-inset transition-transform hover:scale-105 animate-in fade-in zoom-in-95 duration-300",
+                                LEVEL_STYLES[lead.scoring.level].chip
+                              )}
+                            >
+                              <Target className="h-3 w-3" />
+                              {lead.scoring.score}
+                            </button>
+                          : null
+                        }
+                      </div>
                     </TableCell>
                     <TableCell className="whitespace-nowrap py-2 text-right text-xs text-slate-500" title={moment(lead.created_at).locale(locale).format('LLL')}>
                       {moment(lead.created_at).locale(locale).fromNow()}
@@ -120,7 +140,11 @@ export function RecentLeads ({ leads, loading, highlightId, removingId, onRefres
                             <MoreHorizontal />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-40">
+                        <DropdownMenuContent align="end" className="w-52">
+                          <DropdownMenuItem onSelect={() => onScore(lead)} className="gap-2">
+                            <Target className="h-4 w-4" />
+                            {t('leads.form.actions.score')}
+                          </DropdownMenuItem>
                           <DropdownMenuItem onSelect={() => onEdit(lead)} className="gap-2">
                             <Pencil className="h-4 w-4" />
                             {t('leads.form.actions.edit')}

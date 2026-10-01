@@ -116,6 +116,10 @@ module.exports = {
 						height: '0'
 					}
 				},
+				'grow-x': {
+					from: { transform: 'scaleX(0)' },
+					to: { transform: 'scaleX(1)' },
+				},
 				fadeUp: {
 					'0%': { opacity: '0', scale: '0.99',  filter: 'blur(0.5px)', },
 					'100%': { opacity: '1', scale: '1',  filter: 'blur(0px)', },
@@ -124,7 +128,8 @@ module.exports = {
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 180ms ease-out',
-				'fade-in': 'fadeUp 300ms ease-out'
+				'fade-in': 'fadeUp 300ms ease-out',
+				'grow-x': 'grow-x 700ms cubic-bezier(0.22, 1, 0.36, 1) both'
 			}
 		}
 	},
