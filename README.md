@@ -6,6 +6,19 @@ Prueba técnica Full Stack para Kuepa EduTech. Sobre la plantilla del CRM (login
 - **Back:** Node 18 + Express + TypeScript + Mongoose 7
 - **Base de datos:** MongoDB
 
+## Capturas
+
+**Registro de leads:** formulario en tres secciones con progreso, leads recientes con su score de factibilidad y funciones próximas.
+
+![Formulario de registro de leads y leads recientes](docs/screenshots/general.png)
+
+<table>
+  <tr>
+    <td width="50%"><strong>Análisis de factibilidad</strong><br><img src="docs/screenshots/factibilidad.png" alt="Diálogo de factibilidad con score, siguiente acción y factores"></td>
+    <td width="50%"><strong>Edición de un lead</strong><br><img src="docs/screenshots/edicion-borrado.png" alt="Panel lateral para editar un lead"></td>
+  </tr>
+</table>
+
 ## Qué se implementó
 
 - `POST /api/lead/create`: registra un lead validando y normalizando los datos, deduplicando el contacto y asignando el asesor.
@@ -303,7 +316,7 @@ Devuelve los últimos 100 leads con `contact` e `interestProgram` poblados y `fu
 
 ## Flujo de trabajo
 
-- Ramas por feature: `feat/back-leads`, `feat/front-leads-form`, `chore/ci-tests`, `docs/readme`, `feat/seeder-acceso-crm`, `feat/lead-edicion`, `feat/lead-scoring` y `style/acento-naranja-kuepa`. Cada una se integra a `main` con `merge --no-ff`, para que el historial muestre cada bloque.
+- Ramas por feature: `feat/back-leads`, `feat/front-leads-form`, `chore/ci-tests`, `docs/readme`, `feat/seeder-acceso-crm`, `feat/lead-edicion`, `feat/lead-scoring`, `style/acento-naranja-kuepa`, `style/naranja-marca-kuepa`, `style/sidebar-naranja-marca`, `feat/proximamente-ui`, `fix/moment-locale-es` y `docs/capturas`. Cada una se integra a `main` con `merge --no-ff`, para que el historial muestre cada bloque.
 - Commits atómicos con Conventional Commits en español.
 - **CI** (`.github/workflows/ci.yml`): en cada push a `main` y en cada PR corre el typecheck y las pruebas del back, y el build del front (Node 18, con caché de npm). El `dist` del front queda como artefacto del workflow.
 
