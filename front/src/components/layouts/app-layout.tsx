@@ -30,6 +30,9 @@ export function AppLayout(props: AppLayoutProps) {
   
   let [searchParams] = useSearchParams();
 
+  // El naranja de marca Kuepa va en su tono vivo; el resto de acentos conserva el tono 800
+  const sidebarBg = $app?.accent === 'orange' ? 'bg-orange-500' : `bg-${$app?.accent}-800`
+
   return (
     <div className="flex flex-col w-screen h-screen">
       <div className="flex w-full">
@@ -41,7 +44,7 @@ export function AppLayout(props: AppLayoutProps) {
             </div>
           </div>
           <SidebarProvider defaultOpen={$app?.sidebar}>
-            <AppSidebar  className={`bg-${$app?.accent}-800 text-white transition-all ease-in-out`} />
+            <AppSidebar  className={`${sidebarBg} text-white transition-all ease-in-out`} />
             <SidebarInset>
               <header className="flex z-50 backdrop-blur-sm bg-white/75 h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
                 <div className="flex items-center gap-1 px-4">
