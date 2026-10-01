@@ -1,12 +1,13 @@
 import { useTranslation } from "react-i18next"
 import moment from "moment"
 import 'moment/locale/es'
-import { Inbox, RefreshCw } from "lucide-react"
+import { Inbox, MoreHorizontal, Pencil, RefreshCw, Trash2 } from "lucide-react"
 import { Lead, LeadStatus } from "@/services/leadService"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 
 const STATUS_STYLES: Record<LeadStatus, string> = {
@@ -21,10 +22,13 @@ export interface RecentLeadsProps {
   leads: Lead[]
   loading: boolean
   highlightId?: string | null
+  removingId?: string | null
   onRefresh: () => void
+  onEdit: (lead: Lead) => void
+  onDelete: (lead: Lead) => void
 }
 
-export function RecentLeads ({ leads, loading, highlightId, onRefresh }: RecentLeadsProps) {
+export function RecentLeads ({ leads, loading, highlightId, removingId, onRefresh, onEdit, onDelete }: RecentLeadsProps) {
   const { t, i18n } = useTranslation()
   const locale = i18n.language?.startsWith('en') ? 'en' : 'es'
 
@@ -70,6 +74,7 @@ export function RecentLeads ({ leads, loading, highlightId, onRefresh }: RecentL
                   <TableHead className="hidden sm:table-cell">{t('leads.form.recent.program')}</TableHead>
                   <TableHead>{t('leads.form.recent.status')}</TableHead>
                   <TableHead className="text-right">{t('leads.form.recent.date')}</TableHead>
+                  <TableHead className="w-10"><span className="sr-only">{t('leads.form.recent.actions')}</span></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -78,7 +83,8 @@ export function RecentLeads ({ leads, loading, highlightId, onRefresh }: RecentL
                     key={lead._id}
                     className={cn(
                       "transition-colors duration-1000",
-                      lead._id === highlightId && "bg-purple-50/80 animate-in fade-in slide-in-from-top-2 duration-500"
+                      lead._id === highlightId && "bg-purple-50/80 animate-in fade-in slide-in-from-top-2 duration-500",
+                      lead._id === removingId && "pointer-events-none bg-rose-50/60 animate-out fade-out slide-out-to-right-4 fill-mode-forwards duration-300"
                     )}
                   >
                     <TableCell className="py-2">
@@ -97,8 +103,35 @@ export function RecentLeads ({ leads, loading, highlightId, onRefresh }: RecentL
                         {t(`leads.form.status.${lead.status}`)}
                       </span>
                     </TableCell>
-                    <TableCell className="whitespace-nowrap py-2 text-right text-xs text-slate-500" title={moment(lead.created_at).format('LLL')}>
+                    <TableCell className="whitespace-nowrap py-2 text-right text-xs text-slate-500" title={moment(lead.created_at).locale(locale).format('LLL')}>
                       {moment(lead.created_at).locale(locale).fromNow()}
+                    </TableCell>
+                    <TableCell className="py-2 pl-0 pr-1 text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            accent="purple"
+                            className="h-8 w-8"
+                            aria-label={t('leads.form.recent.actions_for', { name: lead.full_name })}
+                          >
+                            <MoreHorizontal />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40">
+                          <DropdownMenuItem onSelect={() => onEdit(lead)} className="gap-2">
+                            <Pencil className="h-4 w-4" />
+                            {t('leads.form.actions.edit')}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onSelect={() => onDelete(lead)} className="gap-2 text-rose-700 focus:bg-rose-50 focus:text-rose-800">
+                            <Trash2 className="h-4 w-4" />
+                            {t('leads.form.actions.delete')}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     </TableCell>
                   </TableRow>
                 ))}

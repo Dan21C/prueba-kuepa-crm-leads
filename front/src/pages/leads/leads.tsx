@@ -1,8 +1,13 @@
 import { app } from "@/atoms/kuepa"
 import { useCallback, useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { LoaderCircle } from "lucide-react"
 import { Lead, leadService } from "@/services/leadService"
 import { Program, programService } from "@/services/programService"
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { useToast } from "@/components/hooks/use-toast"
 import { LeadForm } from "./components/lead-form"
 import { RecentLeads } from "./components/recent-leads"
 
@@ -11,12 +16,17 @@ export interface LeadsProps {
 
 export default function Leads (props?: LeadsProps) {
   const { t } = useTranslation()
+  const { toast } = useToast()
 
   const [programs, setPrograms] = useState<Program[]>([])
   const [programsLoading, setProgramsLoading] = useState(true)
   const [leads, setLeads] = useState<Lead[]>([])
   const [leadsLoading, setLeadsLoading] = useState(true)
   const [highlightId, setHighlightId] = useState<string | null>(null)
+  const [editing, setEditing] = useState<Lead | null>(null)
+  const [deleting, setDeleting] = useState<Lead | null>(null)
+  const [removing, setRemoving] = useState(false)
+  const [removingId, setRemovingId] = useState<string | null>(null)
 
   useEffect(() => {
     app.set({
@@ -51,9 +61,39 @@ export default function Leads (props?: LeadsProps) {
     loadLeads()
   }, [loadLeads])
 
-  const onCreated = async (lead: Lead) => {
+  const onSaved = async (lead: Lead) => {
+    setEditing(null)
     setHighlightId(lead._id)
     await loadLeads()
+  }
+
+  const confirmDelete = async () => {
+    if (!deleting) return
+    setRemoving(true)
+    const response = await leadService.remove(deleting._id)
+    setRemoving(false)
+
+    if (response?.code !== 200) {
+      toast({
+        variant: 'destructive',
+        title: t('leads.form.toast.delete_error_title'),
+        description: t(`leads.form.api.${response?.message || 'network'}`, { defaultValue: t('leads.form.api.server.error') }),
+      })
+      return
+    }
+
+    const lead = deleting
+    setDeleting(null)
+    // Deja correr la animación de salida de la fila antes de quitarla
+    setRemovingId(lead._id)
+    setTimeout(() => {
+      setLeads((current) => current.filter((_l) => _l._id !== lead._id))
+      setRemovingId(null)
+    }, 300)
+    toast({
+      title: t('leads.form.toast.deleted_title'),
+      description: t('leads.form.toast.deleted_description', { name: lead.full_name, id: lead.incremental }),
+    })
   }
 
   return (
@@ -64,11 +104,63 @@ export default function Leads (props?: LeadsProps) {
       </header>
 
       <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">
-        <LeadForm programs={programs} programsLoading={programsLoading} onCreated={onCreated} />
+        <LeadForm programs={programs} programsLoading={programsLoading} onSaved={onSaved} />
         <div className="lg:sticky lg:top-0">
-          <RecentLeads leads={leads} loading={leadsLoading} highlightId={highlightId} onRefresh={loadLeads} />
+          <RecentLeads
+            leads={leads}
+            loading={leadsLoading}
+            highlightId={highlightId}
+            removingId={removingId}
+            onRefresh={loadLeads}
+            onEdit={setEditing}
+            onDelete={setDeleting}
+          />
         </div>
       </div>
+
+      <Sheet open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
+        <SheetContent className="w-full overflow-y-auto p-0 sm:max-w-2xl">
+          <SheetHeader className="border-b border-slate-100 p-6 pb-4 text-left">
+            <SheetTitle className="font-title text-xl text-purple-800">
+              {t('leads.form.edit.title', { id: editing?.incremental })}
+            </SheetTitle>
+            <SheetDescription>{t('leads.form.edit.description')}</SheetDescription>
+          </SheetHeader>
+          {
+            editing ?
+              <LeadForm
+                key={editing._id}
+                lead={editing}
+                programs={programs}
+                programsLoading={programsLoading}
+                onSaved={onSaved}
+                onCancel={() => setEditing(null)}
+                className="rounded-none border-0 shadow-none"
+              />
+            : null
+          }
+        </SheetContent>
+      </Sheet>
+
+      <Dialog open={!!deleting} onOpenChange={(open) => !open && !removing && setDeleting(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('leads.form.delete.title')}</DialogTitle>
+            <DialogDescription>
+              {t('leads.form.delete.description', { name: deleting?.full_name, id: deleting?.incremental })}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button type="button" variant="ghost" onClick={() => setDeleting(null)} disabled={removing}>
+              {t('leads.form.actions.cancel')}
+            </Button>
+            <Button type="button" tone="rose" onClick={confirmDelete} disabled={removing} aria-busy={removing}>
+              {removing ? <LoaderCircle className="animate-spin" /> : null}
+              {t('leads.form.actions.delete')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
