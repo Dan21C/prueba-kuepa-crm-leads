@@ -10,6 +10,18 @@ const TrackingSchema = new Schema({
   },
   description:{
     type: Schema.Types.String,
+  },
+  target_status:{
+    type: Schema.Types.String,
+    enum: ['active', 'grading', 'sold', 'dropped', 'inactive'],
+  },
+  defaults:{
+    again: {type: Schema.Types.Boolean},
+  },
+  status:{
+    type: Schema.Types.String,
+    enum: ['active', 'inactive'],
+    default: 'active'
   }
 }, {
   collection: 'trackings', timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }

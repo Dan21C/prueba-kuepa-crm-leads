@@ -20,6 +20,14 @@ class LeadController {
 
   constructor () {}
 
+  /**
+  * authMiddleware inyecta el usuario en `user_logged`; el servicio trabaja con `user`.
+  */
+  private params = (req: Request) => {
+    const { user_logged, ..._params } = req._data()
+    return { ..._params, user: user_logged }
+  }
+
   public test = async(req: Request, res: Response) => {
     const _params = req._data()
     const response = await this.service.test(_params)
@@ -27,25 +35,37 @@ class LeadController {
   }
 
   public adviserInfo = async(req: Request, res: Response) => {
-    const _params = req._data()
+    const _params = this.params(req)
     const response = await this.service.adviserInfo(_params)
     return responseUtility.build(res, response)
   }
 
   public upsert = async(req: Request, res: Response) => {
-    const _params = req._data()
+    const _params = this.params(req)
     const response = await this.service.upsert(_params)
     return responseUtility.build(res, response)
   }
 
+  public create = async(req: Request, res: Response) => {
+    const _params = this.params(req)
+    const response = await this.service.create(_params)
+    return responseUtility.build(res, response)
+  }
+
+  public checkContact = async(req: Request, res: Response) => {
+    const _params = this.params(req)
+    const response = await this.service.checkContact(_params)
+    return responseUtility.build(res, response)
+  }
+
   public list = async(req: Request, res: Response) => {
-    const _params = req._data()
+    const _params = this.params(req)
     const response = await this.service.list(_params)
     return responseUtility.build(res, response)
   }
 
   public get = async(req: Request, res: Response) => {
-    const _params = req._data()
+    const _params = this.params(req)
     const response = await this.service.get(_params)
     return responseUtility.build(res, response)
   }
