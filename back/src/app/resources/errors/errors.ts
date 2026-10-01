@@ -13,5 +13,6 @@ export const errors = {
   },
   third: {
     not_found: { code: 404 },
+    already_exists: { code: 409 },
   },
 }
