@@ -60,7 +60,7 @@ export function Sidebar({ className, module, window }: AppLayoutProps) {
                   {
                     can('sidebar:leads')?
                       <>
-                        <Button to="/crm/leads" activeAccent={module === 'crm' && window === 'lead' ? 'purple': null} accent="purple" variant="ghost" className="w-full justify-center md:justify-start px-3 text-center md:px-4">
+                        <Button to="/leads" activeAccent={module === 'crm' && window === 'lead' ? 'purple': null} accent="purple" variant="ghost" className="w-full justify-center md:justify-start px-3 text-center md:px-4">
                           <BsMagnet className="mr-0 md:mr-2 h-5 w-5 text-purple-800"/>
                           <span className="hidden md:block">{t('sidebar.leads')}</span>
                         </Button>
