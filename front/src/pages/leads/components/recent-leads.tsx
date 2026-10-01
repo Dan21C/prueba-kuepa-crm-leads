@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 import { LEVEL_STYLES } from "./scoring-dialog"
 
 const STATUS_STYLES: Record<LeadStatus, string> = {
-  active: 'bg-purple-50 text-purple-800 ring-purple-600/20',
+  active: 'bg-sky-50 text-sky-800 ring-sky-600/20',
   grading: 'bg-amber-50 text-amber-800 ring-amber-600/20',
   sold: 'bg-emerald-50 text-emerald-800 ring-emerald-600/20',
   dropped: 'bg-rose-50 text-rose-800 ring-rose-600/20',
@@ -45,7 +45,7 @@ export function RecentLeads ({ leads, loading, highlightId, removingId, onRefres
           type="button"
           variant="ghost"
           size="icon"
-          accent="purple"
+          accent="orange"
           onClick={onRefresh}
           disabled={loading}
           aria-label={t('leads.form.recent.refresh')}
@@ -62,7 +62,7 @@ export function RecentLeads ({ leads, loading, highlightId, removingId, onRefres
             </div>
           : !leads.length ?
             <div className="flex flex-col items-center gap-2 px-4 py-10 text-center animate-in fade-in duration-500">
-              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-purple-50 text-purple-700">
+              <span className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-50 text-orange-700">
                 <Inbox className="h-6 w-6" />
               </span>
               <p className="font-medium text-slate-800">{t('leads.form.recent.empty_title')}</p>
@@ -85,7 +85,7 @@ export function RecentLeads ({ leads, loading, highlightId, removingId, onRefres
                     key={lead._id}
                     className={cn(
                       "transition-colors duration-1000",
-                      lead._id === highlightId && "bg-purple-50/80 animate-in fade-in slide-in-from-top-2 duration-500",
+                      lead._id === highlightId && "bg-orange-50/80 animate-in fade-in slide-in-from-top-2 duration-500",
                       lead._id === removingId && "pointer-events-none bg-rose-50/60 animate-out fade-out slide-out-to-right-4 fill-mode-forwards duration-300"
                     )}
                   >
@@ -133,7 +133,7 @@ export function RecentLeads ({ leads, loading, highlightId, removingId, onRefres
                             type="button"
                             variant="ghost"
                             size="icon"
-                            accent="purple"
+                            accent="orange"
                             className="h-8 w-8"
                             aria-label={t('leads.form.recent.actions_for', { name: lead.full_name })}
                           >

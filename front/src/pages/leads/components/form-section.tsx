@@ -22,7 +22,7 @@ export function FormSection ({ step, title, description, done, delay = 0, childr
           aria-hidden
           className={cn(
             "flex h-7 w-7 shrink-0 items-center justify-center rounded-full border text-sm font-semibold transition-colors duration-300",
-            done ? "border-purple-700 bg-purple-700 text-white" : "border-purple-200 bg-purple-50 text-purple-800"
+            done ? "border-orange-700 bg-orange-700 text-white" : "border-orange-200 bg-orange-50 text-orange-800"
           )}
         >
           {step}

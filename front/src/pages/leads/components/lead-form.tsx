@@ -201,9 +201,9 @@ export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, 
             aria-valuemin={0}
             aria-valuemax={100}
             aria-valuenow={progress}
-            className="h-1.5 w-full overflow-hidden rounded-full bg-purple-100"
+            className="h-1.5 w-full overflow-hidden rounded-full bg-orange-100"
           >
-            <div className="h-full rounded-full bg-purple-700 transition-[width] duration-500 ease-out" style={{ width: `${progress}%` }} />
+            <div className="h-full rounded-full bg-orange-700 transition-[width] duration-500 ease-out" style={{ width: `${progress}%` }} />
           </div>
         </div>
 
@@ -314,11 +314,11 @@ export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, 
             {
               duplicate?.exists ?
                 <Alert
-                  variant="purple"
+                  variant="orange"
                   aria-live="polite"
                   className={cn(
                     "animate-in fade-in slide-in-from-top-2 duration-300",
-                    duplicate.lead ? "border-amber-500/60 bg-amber-50 text-amber-900" : "bg-purple-50 text-purple-900"
+                    duplicate.lead ? "border-amber-500/60 bg-amber-50 text-amber-900" : "bg-orange-50 text-orange-900"
                   )}
                 >
                   <UserRoundCheck className="h-4 w-4" />
@@ -379,7 +379,7 @@ export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, 
                     value={value}
                     variant="outline"
                     size="sm"
-                    className="gap-1.5 px-3 transition-all data-[state=on]:border-purple-600 data-[state=on]:bg-purple-100 data-[state=on]:text-purple-900"
+                    className="gap-1.5 px-3 transition-all data-[state=on]:border-orange-600 data-[state=on]:bg-orange-100 data-[state=on]:text-orange-900"
                   >
                     <Icon />
                     {t(`leads.form.source.options.${value}`)}
@@ -410,7 +410,7 @@ export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, 
                         value={value}
                         variant="outline"
                         size="sm"
-                        className="px-3 transition-all data-[state=on]:border-purple-600 data-[state=on]:bg-purple-100 data-[state=on]:text-purple-900"
+                        className="px-3 transition-all data-[state=on]:border-orange-600 data-[state=on]:bg-orange-100 data-[state=on]:text-orange-900"
                       >
                         {t(`leads.form.status.${value}`)}
                       </ToggleGroupItem>
@@ -443,10 +443,10 @@ export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, 
           </FormSection>
 
           <div className="flex flex-col-reverse gap-2 border-t border-slate-100 pt-4 sm:flex-row sm:justify-end">
-            <Button type="button" variant="ghost" accent="purple" onClick={editing && onCancel ? onCancel : reset} disabled={submitting}>
+            <Button type="button" variant="ghost" accent="orange" onClick={editing && onCancel ? onCancel : reset} disabled={submitting}>
               {editing ? t('leads.form.actions.cancel') : t('leads.form.actions.reset')}
             </Button>
-            <Button type="submit" tone="purple" disabled={submitting} aria-busy={submitting} className="min-w-40 active:scale-[0.98]">
+            <Button type="submit" tone="orange" disabled={submitting} aria-busy={submitting} className="min-w-40 active:scale-[0.98]">
               {submitting ? <LoaderCircle className="animate-spin" /> : null}
               {
                 submitting ? t(editing ? 'leads.form.actions.saving' : 'leads.form.actions.submitting')

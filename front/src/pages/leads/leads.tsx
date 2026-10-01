@@ -37,7 +37,7 @@ export default function Leads (props?: LeadsProps) {
       module: 'leads',
       window: 'crm',
       back: null,
-      accent: 'purple',
+      accent: 'orange',
       breadcrumb:[
         {
           title: 'Leads',
@@ -105,7 +105,7 @@ export default function Leads (props?: LeadsProps) {
   return (
     <div className="flex flex-col gap-6 pb-10">
       <header className="flex flex-col gap-1 px-1 pt-2 animate-in fade-in slide-in-from-top-1 duration-500">
-        <h1 className="flex text-3xl md:text-4xl font-title text-purple-800">{t('leads.form.title')}</h1>
+        <h1 className="flex text-3xl md:text-4xl font-title text-orange-800">{t('leads.form.title')}</h1>
         <p className="max-w-2xl text-sm text-slate-500">{t('leads.form.subtitle')}</p>
       </header>
 
@@ -128,7 +128,7 @@ export default function Leads (props?: LeadsProps) {
       <Sheet open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
         <SheetContent className="w-full overflow-y-auto p-0 sm:max-w-2xl">
           <SheetHeader className="border-b border-slate-100 p-6 pb-4 text-left">
-            <SheetTitle className="font-title text-xl text-purple-800">
+            <SheetTitle className="font-title text-xl text-orange-800">
               {t('leads.form.edit.title', { id: editing?.incremental })}
             </SheetTitle>
             <SheetDescription>{t('leads.form.edit.description')}</SheetDescription>
