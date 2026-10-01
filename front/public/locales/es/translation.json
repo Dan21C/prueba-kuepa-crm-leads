@@ -5,9 +5,18 @@
       "subtitle": "Registra a las personas interesadas en nuestros programas. Si el contacto ya existe, reutilizamos sus datos para no duplicarlo.",
       "progress": "Campos obligatorios completados",
       "sections": {
-        "personal": { "title": "Datos personales", "description": "Cómo se llama y cómo se identifica." },
-        "contact": { "title": "Contacto", "description": "Por dónde lo va a contactar el asesor." },
-        "program": { "title": "Programa de interés", "description": "Qué quiere estudiar y cómo llegó a Kuepa." }
+        "personal": {
+          "title": "Datos personales",
+          "description": "Cómo se llama y cómo se identifica."
+        },
+        "contact": {
+          "title": "Contacto",
+          "description": "Por dónde lo va a contactar el asesor."
+        },
+        "program": {
+          "title": "Programa de interés",
+          "description": "Qué quiere estudiar y cómo llegó a Kuepa."
+        }
       },
       "fields": {
         "first_name": "Nombres",
@@ -16,7 +25,8 @@
         "document": "Número de documento",
         "email": "Correo electrónico",
         "number": "Celular",
-        "notes": "Notas (opcional)"
+        "notes": "Notas (opcional)",
+        "status": "Estado del lead"
       },
       "placeholders": {
         "first_name": "Ej: Ana María",
@@ -64,15 +74,32 @@
         "invalid": "El valor no es válido.",
         "too_long": "Es demasiado largo.",
         "not_found": "No existe.",
-        "document": { "invalid": "Revisa el documento: solo números (5 a 12 dígitos), o alfanumérico si es pasaporte." },
-        "email": { "invalid": "Escribe un correo válido, por ejemplo nombre@correo.com." },
-        "number": { "invalid": "Debe tener 10 dígitos y empezar por 3." },
-        "first_name": { "too_long": "Máximo 60 caracteres." },
-        "last_name": { "too_long": "Máximo 60 caracteres." },
-        "notes": { "too_long": "Máximo 500 caracteres." },
+        "document": {
+          "invalid": "Revisa el documento: solo números (5 a 12 dígitos), o alfanumérico si es pasaporte."
+        },
+        "email": {
+          "invalid": "Escribe un correo válido, por ejemplo nombre@correo.com."
+        },
+        "number": {
+          "invalid": "Debe tener 10 dígitos y empezar por 3."
+        },
+        "first_name": {
+          "too_long": "Máximo 60 caracteres."
+        },
+        "last_name": {
+          "too_long": "Máximo 60 caracteres."
+        },
+        "notes": {
+          "too_long": "Máximo 500 caracteres."
+        },
         "interestProgram": {
           "required": "Selecciona el programa de interés.",
           "not_found": "El programa ya no está disponible. Selecciona otro."
+        },
+        "already_exists": "Ya está registrado en otro contacto.",
+        "status": {
+          "already_exists": "El contacto ya tiene otro lead abierto; ciérralo antes de reabrir este.",
+          "invalid": "Estado no válido."
         }
       },
       "duplicate": {
@@ -83,24 +110,38 @@
       "actions": {
         "submit": "Registrar lead",
         "submitting": "Registrando...",
-        "reset": "Limpiar"
+        "reset": "Limpiar",
+        "cancel": "Cancelar",
+        "save": "Guardar cambios",
+        "saving": "Guardando...",
+        "edit": "Editar",
+        "delete": "Eliminar"
       },
       "toast": {
         "success_title": "Lead registrado",
         "success_description": "Se registró el lead #{{id}} de {{name}}.",
-        "error_title": "No se pudo registrar el lead"
+        "error_title": "No se pudo registrar el lead",
+        "updated_title": "Lead actualizado",
+        "updated_description": "Se guardaron los cambios del lead #{{id}}.",
+        "deleted_title": "Lead eliminado",
+        "deleted_description": "El lead #{{id}} de {{name}} se eliminó.",
+        "delete_error_title": "No se pudo eliminar el lead"
       },
       "api": {
         "network": "No hay conexión con el servidor. Intenta de nuevo.",
         "lead": {
           "invalid_params": "Hay campos con errores. Revísalos e intenta de nuevo.",
-          "already_exists": "Este contacto ya tiene un lead activo; no se puede crear otro."
+          "already_exists": "Este contacto ya tiene un lead activo; no se puede crear otro.",
+          "not_found": "El lead ya no existe. Actualiza la lista."
         },
         "program": {
           "not_found": "El programa seleccionado no existe o está inactivo."
         },
         "server": {
           "error": "Ocurrió un error inesperado. Intenta de nuevo."
+        },
+        "third": {
+          "already_exists": "El documento, correo o celular ya pertenece a otro contacto."
         }
       },
       "recent": {
@@ -113,7 +154,17 @@
         "name": "Nombre",
         "program": "Programa",
         "status": "Estado",
-        "date": "Fecha"
+        "date": "Fecha",
+        "actions": "Acciones",
+        "actions_for": "Acciones para {{name}}"
+      },
+      "edit": {
+        "title": "Editar lead #{{id}}",
+        "description": "Los datos personales se actualizan en el contacto y aplican a todos sus leads."
+      },
+      "delete": {
+        "title": "¿Eliminar este lead?",
+        "description": "Se eliminará el lead #{{id}} de {{name}}. El contacto se conserva en el CRM para no perder su historial."
       }
     }
   }

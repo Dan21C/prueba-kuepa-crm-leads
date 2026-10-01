@@ -5,9 +5,18 @@
       "subtitle": "Register people interested in our programs. If the contact already exists, we reuse their data instead of duplicating it.",
       "progress": "Required fields completed",
       "sections": {
-        "personal": { "title": "Personal details", "description": "Their name and how they identify." },
-        "contact": { "title": "Contact", "description": "How the adviser will reach them." },
-        "program": { "title": "Program of interest", "description": "What they want to study and how they found Kuepa." }
+        "personal": {
+          "title": "Personal details",
+          "description": "Their name and how they identify."
+        },
+        "contact": {
+          "title": "Contact",
+          "description": "How the adviser will reach them."
+        },
+        "program": {
+          "title": "Program of interest",
+          "description": "What they want to study and how they found Kuepa."
+        }
       },
       "fields": {
         "first_name": "First names",
@@ -16,7 +25,8 @@
         "document": "Document number",
         "email": "Email",
         "number": "Mobile",
-        "notes": "Notes (optional)"
+        "notes": "Notes (optional)",
+        "status": "Lead status"
       },
       "placeholders": {
         "first_name": "e.g. Ana María",
@@ -64,15 +74,32 @@
         "invalid": "The value is not valid.",
         "too_long": "It is too long.",
         "not_found": "It does not exist.",
-        "document": { "invalid": "Check the document: numbers only (5 to 12 digits), or alphanumeric for passports." },
-        "email": { "invalid": "Enter a valid email, e.g. name@email.com." },
-        "number": { "invalid": "It must have 10 digits and start with 3." },
-        "first_name": { "too_long": "Maximum 60 characters." },
-        "last_name": { "too_long": "Maximum 60 characters." },
-        "notes": { "too_long": "Maximum 500 characters." },
+        "document": {
+          "invalid": "Check the document: numbers only (5 to 12 digits), or alphanumeric for passports."
+        },
+        "email": {
+          "invalid": "Enter a valid email, e.g. name@email.com."
+        },
+        "number": {
+          "invalid": "It must have 10 digits and start with 3."
+        },
+        "first_name": {
+          "too_long": "Maximum 60 characters."
+        },
+        "last_name": {
+          "too_long": "Maximum 60 characters."
+        },
+        "notes": {
+          "too_long": "Maximum 500 characters."
+        },
         "interestProgram": {
           "required": "Select the program of interest.",
           "not_found": "The program is no longer available. Pick another one."
+        },
+        "already_exists": "It is already registered to another contact.",
+        "status": {
+          "already_exists": "The contact already has another open lead; close it before reopening this one.",
+          "invalid": "Invalid status."
         }
       },
       "duplicate": {
@@ -83,24 +110,38 @@
       "actions": {
         "submit": "Register lead",
         "submitting": "Registering...",
-        "reset": "Clear"
+        "reset": "Clear",
+        "cancel": "Cancel",
+        "save": "Save changes",
+        "saving": "Saving...",
+        "edit": "Edit",
+        "delete": "Delete"
       },
       "toast": {
         "success_title": "Lead registered",
         "success_description": "Lead #{{id}} for {{name}} was registered.",
-        "error_title": "The lead could not be registered"
+        "error_title": "The lead could not be registered",
+        "updated_title": "Lead updated",
+        "updated_description": "Changes to lead #{{id}} were saved.",
+        "deleted_title": "Lead deleted",
+        "deleted_description": "Lead #{{id}} for {{name}} was deleted.",
+        "delete_error_title": "The lead could not be deleted"
       },
       "api": {
         "network": "Cannot reach the server. Please try again.",
         "lead": {
           "invalid_params": "Some fields have errors. Review them and try again.",
-          "already_exists": "This contact already has an active lead; another one cannot be created."
+          "already_exists": "This contact already has an active lead; another one cannot be created.",
+          "not_found": "The lead no longer exists. Refresh the list."
         },
         "program": {
           "not_found": "The selected program does not exist or is inactive."
         },
         "server": {
           "error": "Something went wrong. Please try again."
+        },
+        "third": {
+          "already_exists": "The document, email or mobile already belongs to another contact."
         }
       },
       "recent": {
@@ -113,7 +154,17 @@
         "name": "Name",
         "program": "Program",
         "status": "Status",
-        "date": "Date"
+        "date": "Date",
+        "actions": "Actions",
+        "actions_for": "Actions for {{name}}"
+      },
+      "edit": {
+        "title": "Edit lead #{{id}}",
+        "description": "Personal details are updated on the contact and apply to all of their leads."
+      },
+      "delete": {
+        "title": "Delete this lead?",
+        "description": "Lead #{{id}} for {{name}} will be deleted. The contact stays in the CRM so its history is kept."
       }
     }
   }
