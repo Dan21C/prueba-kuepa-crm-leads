@@ -7,13 +7,21 @@ const { Schema } = mongoose
 const ProgramSchema = new Schema({
   name:{
     type: Schema.Types.String,
+    required: true,
   },
   description:{
     type: Schema.Types.String,
+  },
+  status:{
+    type: Schema.Types.String,
+    enum: ['active', 'inactive'],
+    default: 'active'
   }
 }, {
   collection: 'programs', timestamps: { createdAt: 'created_at', updatedAt: 'updated_at' }
 })
+
+ProgramSchema.index({ name: 1 })
 
 ProgramSchema.plugin(mongoose_delete, {
   deletedAt: true,
