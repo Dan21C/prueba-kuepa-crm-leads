@@ -17,7 +17,7 @@ Prueba técnica Full Stack para Kuepa EduTech. Sobre la plantilla del CRM (login
   - Validación en el cliente igual a la del back y aviso de contacto existente.
   - Panel de leads recientes.
   - Textos en español e inglés, y animaciones que respetan `prefers-reduced-motion`.
-  - Acento en el naranja de la marca Kuepa. Se evita el negro como acento por legibilidad, y todas las combinaciones cumplen el contraste AA.
+  - Acento en el naranja de la marca Kuepa (`#fa4c01`), definido como paleta en `tailwind.config.js`. El tono de marca va en bordes, íconos y la barra de progreso, porque con texto blanco da 3.4:1; los botones usan el 600 (`#d63d00`, 4.6:1) para cumplir el contraste AA. Se evita el negro como acento por legibilidad.
 - **Edición y borrado de leads** desde la tabla. La edición abre un panel lateral que reutiliza el mismo formulario y la misma validación, e incluye el cambio de estado. El borrado es lógico y pide confirmación.
 - **Análisis de factibilidad** (`POST /api/lead/score/:_id`): un score de 0 a 100 de la probabilidad de matrícula, con factores explicables y una siguiente acción recomendada. Si se configura `OPENAI_API_KEY`, se suma un análisis redactado por OpenAI.
 - Corrección de los problemas de la plantilla que impedían que el módulo de leads funcionara (ver más abajo).

@@ -62,6 +62,20 @@ module.exports = {
 				},
 				flex: {
 					'5': '1 0 21%'
+				},
+				// Naranja de marca Kuepa (#fa4c01 = 500). Con texto blanco usar 600 o más oscuro (contraste AA ≥ 4.5)
+				orange: {
+					50: '#fff4ec',
+					100: '#ffe4d0',
+					200: '#ffc6a1',
+					300: '#ff9e66',
+					400: '#fd7430',
+					500: '#fa4c01',
+					600: '#d63d00',
+					700: '#b83300',
+					800: '#922a04',
+					900: '#76250a',
+					950: '#401002'
 				}
 			},
 			borderRadius: {
