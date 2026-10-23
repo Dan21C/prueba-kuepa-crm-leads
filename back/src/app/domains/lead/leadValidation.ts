@@ -1,5 +1,5 @@
 // @import_models
-import { LEAD_SOURCES } from "@app/models/leadModel"
+import { LEAD_SOURCES, EDUCATION_LEVELS } from "@app/models/leadModel"
 
 export const DOCUMENT_TYPES = ['cc', 'ti', 'pp', 'nt'] as const
 
@@ -7,6 +7,9 @@ export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 export const MOBILE_REGEX = /^3\d{9}$/
 export const DOCUMENT_REGEX = /^\d{5,12}$/
 export const PASSPORT_REGEX = /^[a-zA-Z0-9]{5,12}$/
+export const BIRTH_DATE_REGEX = /^\d{4}-\d{2}-\d{2}$/
+export const MIN_AGE = 14
+export const MAX_AGE = 100
 export const OBJECT_ID_REGEX = /^[a-f\d]{24}$/i
 
 export interface ILeadCreateParams {
@@ -19,6 +22,8 @@ export interface ILeadCreateParams {
   interestProgram: string
   source?: string
   notes?: string
+  birth_date?: string
+  education_level?: string
 }
 
 export type LeadFieldErrors = Partial<Record<keyof ILeadCreateParams, string>>
@@ -43,6 +48,8 @@ export const normalizeLead = (_params: any): ILeadCreateParams => {
     interestProgram: clean(_params?.interestProgram),
     source: clean(_params?.source) || 'manual',
     notes: clean(_params?.notes),
+    birth_date: clean(_params?.birth_date).slice(0, 10),
+    education_level: clean(_params?.education_level),
   }
 }
 
@@ -78,6 +85,21 @@ export const validateLead = (lead: ILeadCreateParams): LeadFieldErrors => {
   if (lead.source && !LEAD_SOURCES.includes(lead.source as any)) errors.source = 'invalid'
 
   if (lead.notes && lead.notes.length > 500) errors.notes = 'too_long'
+
+  if (lead.birth_date) {
+    const date = new Date(`${lead.birth_date}T00:00:00.000Z`)
+    const valid = BIRTH_DATE_REGEX.test(lead.birth_date) && !isNaN(date.getTime()) && date.toISOString().startsWith(lead.birth_date)
+    if (!valid) errors.birth_date = 'invalid'
+    else {
+      const today = new Date()
+      let age = today.getUTCFullYear() - date.getUTCFullYear()
+      if (today.getUTCMonth() < date.getUTCMonth() || (today.getUTCMonth() === date.getUTCMonth() && today.getUTCDate() < date.getUTCDate())) age--
+      if (date > today) errors.birth_date = 'future'
+      else if (age < MIN_AGE || age > MAX_AGE) errors.birth_date = 'out_of_range'
+    }
+  }
+
+  if (lead.education_level && !EDUCATION_LEVELS.includes(lead.education_level as any)) errors.education_level = 'invalid'
 
   return errors
 }

@@ -1,7 +1,7 @@
 import { FormEvent, useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { CalendarDays, Globe, LoaderCircle, PenLine, Share2, UserRoundCheck, Users } from "lucide-react"
-import { CheckContactResponse, Lead, LeadPayload, LeadSource, LeadStatus, leadService } from "@/services/leadService"
+import { CalendarDays, GraduationCap, Globe, LoaderCircle, PenLine, Share2, UserRoundCheck, Users } from "lucide-react"
+import { CheckContactResponse, EducationLevel, Lead, LeadPayload, LeadSource, LeadStatus, leadService } from "@/services/leadService"
 import { Program } from "@/services/programService"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -16,10 +16,12 @@ import { FormField, fieldErrorId } from "./form-field"
 import { FormSection } from "./form-section"
 import { ProgramPicker } from "./program-picker"
 import {
-  emptyLead, FieldErrors, LeadField, normalizeDocument, normalizeNumber, NOTES_MAX, REQUIRED_FIELDS, validateField, validateLead
+  emptyLead, FieldErrors, LeadField, normalizeDocument, normalizeNumber, NOTES_MAX, REQUIRED_FIELDS, today, validateField, validateLead
 } from "../lead-validation"
 
 const DOCUMENT_TYPES = ['cc', 'ti', 'pp', 'nt'] as const
+const EDUCATION_LEVELS: EducationLevel[] = ['primary', 'secondary', 'technical', 'undergraduate', 'postgraduate']
+const NO_EDUCATION = 'none'
 const CONTACT_FIELDS: LeadField[] = ['document', 'email', 'number']
 const SOURCES: Array<{ value: LeadSource, icon: typeof Globe }> = [
   { value: 'manual', icon: PenLine },
@@ -55,6 +57,8 @@ const fromLead = (lead: Lead): LeadPayload => ({
   interestProgram: lead.interestProgram?._id || '',
   source: lead.source || 'manual',
   notes: lead.notes || '',
+  birth_date: lead.birth_date ? lead.birth_date.slice(0, 10) : '',
+  education_level: lead.education_level || '',
 })
 
 export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, className }: LeadFormProps) {
@@ -267,6 +271,37 @@ export function LeadForm ({ programs, programsLoading, lead, onSaved, onCancel, 
                   onBlur={() => blur('document')}
                   className={inputClass('document')}
                 />
+              </FormField>
+            </div>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <FormField id="lead-birth_date" label={t('leads.form.fields.birth_date')} error={message('birth_date')} hint={t('leads.form.hints.birth_date')}>
+                <Input
+                  {...a11y('birth_date')}
+                  type="date"
+                  autoComplete="bday"
+                  max={today()}
+                  value={values.birth_date}
+                  onChange={(event) => change('birth_date', event.target.value)}
+                  onBlur={() => blur('birth_date')}
+                  className={cn(inputClass('birth_date'), "tabular-nums")}
+                />
+              </FormField>
+              <FormField id="lead-education_level" label={t('leads.form.fields.education_level')} error={message('education_level')} hint={t('leads.form.hints.education_level')}>
+                <Select
+                  value={values.education_level || undefined}
+                  onValueChange={(value) => change('education_level', value === NO_EDUCATION ? '' : value)}
+                >
+                  <SelectTrigger {...a11y('education_level')} className={inputClass('education_level')}>
+                    <GraduationCap className="mr-2 h-4 w-4 shrink-0 text-orange-500" aria-hidden />
+                    <SelectValue placeholder={t('leads.form.placeholders.education_level')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {EDUCATION_LEVELS.map((level) => (
+                      <SelectItem key={level} value={level}>{t(`leads.form.education_levels.${level}`)}</SelectItem>
+                    ))}
+                    {values.education_level ? <SelectItem value={NO_EDUCATION}>{t('leads.form.education_levels.none')}</SelectItem> : null}
+                  </SelectContent>
+                </Select>
               </FormField>
             </div>
           </FormSection>

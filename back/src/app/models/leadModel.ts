@@ -8,6 +8,9 @@ export const LEAD_STATUSES = ['active', 'grading', 'sold', 'dropped', 'inactive'
 export const LEAD_OPEN_STATUSES = ['active', 'grading']
 export const LEAD_SOURCES = ['web', 'manual', 'referral', 'event', 'social'] as const
 
+export const EDUCATION_LEVELS = ['primary', 'secondary', 'technical', 'undergraduate', 'postgraduate'] as const
+
+export type EducationLevel = typeof EDUCATION_LEVELS[number]
 export type LeadStatus = typeof LEAD_STATUSES[number]
 export type LeadSource = typeof LEAD_SOURCES[number]
 
@@ -47,6 +50,8 @@ export interface ILead {
   adnetwork?: Types.ObjectId;
   source: LeadSource;
   notes?: string;
+  birth_date?: Date;
+  education_level?: EducationLevel;
   status: LeadStatus;
   scoring?: ILeadScoring;
   trackings: ILeadTracking[];
@@ -71,6 +76,11 @@ const LeadSchema = new Schema({
     default: 'manual'
   },
   notes: {type: Schema.Types.String},
+  birth_date: {type: Schema.Types.Date},
+  education_level: {
+    type: Schema.Types.String,
+    enum: EDUCATION_LEVELS,
+  },
   status:{
     type: Schema.Types.String,
     enum: LEAD_STATUSES,

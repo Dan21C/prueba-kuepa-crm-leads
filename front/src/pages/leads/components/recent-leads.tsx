@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next"
 import moment from "moment"
 // Vite resuelve moment a su build ESM (jsnext:main); el idioma debe registrarse sobre esa misma instancia
 import 'moment/dist/locale/es'
-import { Inbox, MoreHorizontal, Pencil, RefreshCw, Target, Trash2 } from "lucide-react"
+import { Cake, GraduationCap, Inbox, MoreHorizontal, Pencil, RefreshCw, Target, Trash2 } from "lucide-react"
 import { Lead, LeadStatus } from "@/services/leadService"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -96,6 +96,28 @@ export function RecentLeads ({ leads, loading, highlightId, removingId, onRefres
                         <span className="text-xs text-slate-500">
                           #{lead.incremental} · {t(`leads.form.source.options.${lead.source}`)}
                         </span>
+                        {
+                          lead.birth_date || lead.education_level ?
+                            <span className="flex flex-wrap items-center gap-x-2 text-xs text-slate-500">
+                              {
+                                lead.birth_date ?
+                                  <span className="inline-flex items-center gap-1" title={moment.utc(lead.birth_date).locale(locale).format('LL')}>
+                                    <Cake className="h-3 w-3 text-orange-500" aria-hidden />
+                                    {t('leads.form.recent.age', { count: moment().diff(moment.utc(lead.birth_date), 'years') })}
+                                  </span>
+                                : null
+                              }
+                              {
+                                lead.education_level ?
+                                  <span className="inline-flex items-center gap-1">
+                                    <GraduationCap className="h-3 w-3 text-orange-500" aria-hidden />
+                                    {t(`leads.form.education_levels.${lead.education_level}`)}
+                                  </span>
+                                : null
+                              }
+                            </span>
+                          : null
+                        }
                       </div>
                     </TableCell>
                     <TableCell className="hidden max-w-[160px] truncate py-2 text-slate-600 sm:table-cell" title={lead.interestProgram?.name}>

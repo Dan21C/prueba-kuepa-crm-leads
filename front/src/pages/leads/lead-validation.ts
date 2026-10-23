@@ -6,6 +6,8 @@ export const MOBILE_REGEX = /^3\d{9}$/
 export const DOCUMENT_REGEX = /^\d{5,12}$/
 export const PASSPORT_REGEX = /^[a-zA-Z0-9]{5,12}$/
 export const NOTES_MAX = 500
+export const MIN_AGE = 14
+export const MAX_AGE = 100
 
 export type LeadField = keyof LeadPayload | 'status'
 export type FieldErrors = Partial<Record<LeadField, string>>
@@ -24,7 +26,15 @@ export const emptyLead = (): LeadPayload => ({
   interestProgram: '',
   source: 'manual',
   notes: '',
+  birth_date: '',
+  education_level: '',
 })
+
+/** Fecha de hoy en YYYY-MM-DD (hora local), para limitar el selector de fecha */
+export const today = () => {
+  const d = new Date()
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
+}
 
 export const normalizeDocument = (value: string) => value.replace(/[\s.-]/g, '').toUpperCase()
 export const normalizeNumber = (value: string) => value.replace(/\D/g, '').slice(0, 10)
@@ -53,6 +63,16 @@ export const validateField = (field: LeadField, lead: LeadPayload): string | und
       return MOBILE_REGEX.test(normalizeNumber(value)) ? undefined : 'invalid'
     case 'notes':
       return value.length > NOTES_MAX ? 'too_long' : undefined
+    case 'birth_date': {
+      if (!value) return undefined
+      const date = new Date(`${value}T00:00:00`)
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(value) || isNaN(date.getTime())) return 'invalid'
+      const now = new Date()
+      if (date > now) return 'future'
+      let age = now.getFullYear() - date.getFullYear()
+      if (now.getMonth() < date.getMonth() || (now.getMonth() === date.getMonth() && now.getDate() < date.getDate())) age--
+      return age < MIN_AGE || age > MAX_AGE ? 'out_of_range' : undefined
+    }
     default:
       return undefined
   }

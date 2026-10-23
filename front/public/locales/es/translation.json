@@ -26,7 +26,9 @@
         "email": "Correo electrónico",
         "number": "Celular",
         "notes": "Notas (opcional)",
-        "status": "Estado del lead"
+        "status": "Estado del lead",
+        "birth_date": "Fecha de nacimiento (opcional)",
+        "education_level": "Nivel educativo (opcional)"
       },
       "placeholders": {
         "first_name": "Ej: Ana María",
@@ -35,12 +37,15 @@
         "document": "Ej: 1020304050",
         "email": "nombre@correo.com",
         "number": "300 123 4567",
-        "notes": "Horario preferido de contacto, dudas, contexto..."
+        "notes": "Horario preferido de contacto, dudas, contexto...",
+        "education_level": "Selecciona"
       },
       "hints": {
         "document": "Solo números, entre 5 y 12 dígitos.",
         "passport": "Letras y números, entre 5 y 12 caracteres.",
-        "number": "10 dígitos, empieza por 3."
+        "number": "10 dígitos, empieza por 3.",
+        "birth_date": "Entre 14 y 100 años.",
+        "education_level": "Último nivel que cursó."
       },
       "document_types": {
         "cc": "Cédula de ciudadanía",
@@ -100,6 +105,14 @@
         "status": {
           "already_exists": "El contacto ya tiene otro lead abierto; ciérralo antes de reabrir este.",
           "invalid": "Estado no válido."
+        },
+        "birth_date": {
+          "invalid": "Escribe una fecha válida.",
+          "future": "La fecha no puede ser futura.",
+          "out_of_range": "La edad debe estar entre 14 y 100 años."
+        },
+        "education_level": {
+          "invalid": "Selecciona un nivel de la lista."
         }
       },
       "duplicate": {
@@ -157,7 +170,9 @@
         "status": "Estado",
         "date": "Fecha",
         "actions": "Acciones",
-        "actions_for": "Acciones para {{name}}"
+        "actions_for": "Acciones para {{name}}",
+        "age_one": "{{count}} año",
+        "age_other": "{{count}} años"
       },
       "edit": {
         "title": "Editar lead #{{id}}",
@@ -226,6 +241,14 @@
             "description": "Contactos y leads de ejemplo para explorar el CRM."
           }
         }
+      },
+      "education_levels": {
+        "primary": "Primaria",
+        "secondary": "Bachillerato",
+        "technical": "Técnico o tecnólogo",
+        "undergraduate": "Profesional",
+        "postgraduate": "Posgrado",
+        "none": "Sin especificar"
       }
     }
   }

@@ -26,7 +26,9 @@
         "email": "Email",
         "number": "Mobile",
         "notes": "Notes (optional)",
-        "status": "Lead status"
+        "status": "Lead status",
+        "birth_date": "Date of birth (optional)",
+        "education_level": "Education level (optional)"
       },
       "placeholders": {
         "first_name": "e.g. Ana María",
@@ -35,12 +37,15 @@
         "document": "e.g. 1020304050",
         "email": "name@email.com",
         "number": "300 123 4567",
-        "notes": "Preferred contact time, questions, context..."
+        "notes": "Preferred contact time, questions, context...",
+        "education_level": "Select"
       },
       "hints": {
         "document": "Numbers only, 5 to 12 digits.",
         "passport": "Letters and numbers, 5 to 12 characters.",
-        "number": "10 digits, starts with 3."
+        "number": "10 digits, starts with 3.",
+        "birth_date": "Between 14 and 100 years old.",
+        "education_level": "Highest level completed."
       },
       "document_types": {
         "cc": "Citizenship ID",
@@ -100,6 +105,14 @@
         "status": {
           "already_exists": "The contact already has another open lead; close it before reopening this one.",
           "invalid": "Invalid status."
+        },
+        "birth_date": {
+          "invalid": "Enter a valid date.",
+          "future": "The date cannot be in the future.",
+          "out_of_range": "Age must be between 14 and 100."
+        },
+        "education_level": {
+          "invalid": "Pick a level from the list."
         }
       },
       "duplicate": {
@@ -157,7 +170,9 @@
         "status": "Status",
         "date": "Date",
         "actions": "Actions",
-        "actions_for": "Actions for {{name}}"
+        "actions_for": "Actions for {{name}}",
+        "age_one": "{{count}} year old",
+        "age_other": "{{count}} years old"
       },
       "edit": {
         "title": "Edit lead #{{id}}",
@@ -226,6 +241,14 @@
             "description": "Sample contacts and leads to explore the CRM."
           }
         }
+      },
+      "education_levels": {
+        "primary": "Primary school",
+        "secondary": "High school",
+        "technical": "Technical / vocational",
+        "undergraduate": "Bachelor's degree",
+        "postgraduate": "Postgraduate",
+        "none": "Not specified"
       }
     }
   }

@@ -3,6 +3,7 @@ const api = '/lead'
 
 export type LeadSource = 'web' | 'manual' | 'referral' | 'event' | 'social'
 export type LeadStatus = 'active' | 'grading' | 'sold' | 'dropped' | 'inactive'
+export type EducationLevel = 'primary' | 'secondary' | 'technical' | 'undergraduate' | 'postgraduate'
 export type DocumentType = 'cc' | 'ti' | 'pp' | 'nt'
 
 export interface LeadPayload {
@@ -15,6 +16,9 @@ export interface LeadPayload {
   interestProgram: string
   source: LeadSource
   notes: string
+  /** YYYY-MM-DD, opcional */
+  birth_date: string
+  education_level: EducationLevel | ''
 }
 
 export type ScoringLevel = 'high' | 'medium' | 'low'
@@ -52,6 +56,8 @@ export interface Lead {
   source: LeadSource
   status: LeadStatus
   notes?: string
+  birth_date?: string
+  education_level?: EducationLevel
   scoring?: LeadScoring
   created_at: string
 }
