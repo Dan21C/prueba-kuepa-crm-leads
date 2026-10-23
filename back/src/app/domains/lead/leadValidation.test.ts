@@ -63,3 +63,26 @@ describe('validateLead', () => {
     assert.equal(errors.interestProgram, 'invalid')
   })
 })
+
+describe('campos opcionales: fecha de nacimiento y nivel educativo', () => {
+  it('son opcionales', () => {
+    assert.deepEqual(validateLead(normalizeLead({ ...valid, birth_date: '', education_level: '' })), {})
+  })
+
+  it('acepta una fecha y un nivel válidos', () => {
+    const lead = normalizeLead({ ...valid, birth_date: '1995-06-15', education_level: 'undergraduate' })
+    assert.deepEqual(validateLead(lead), {})
+    assert.equal(lead.birth_date, '1995-06-15')
+  })
+
+  it('rechaza fechas inexistentes, futuras o fuera de rango', () => {
+    assert.equal(validateLead(normalizeLead({ ...valid, birth_date: '1995-02-31' })).birth_date, 'invalid')
+    assert.equal(validateLead(normalizeLead({ ...valid, birth_date: '15/06/1995' })).birth_date, 'invalid')
+    assert.equal(validateLead(normalizeLead({ ...valid, birth_date: '2999-01-01' })).birth_date, 'future')
+    assert.equal(validateLead(normalizeLead({ ...valid, birth_date: '1900-01-01' })).birth_date, 'out_of_range')
+  })
+
+  it('rechaza un nivel educativo desconocido', () => {
+    assert.equal(validateLead(normalizeLead({ ...valid, education_level: 'phd' })).education_level, 'invalid')
+  })
+})

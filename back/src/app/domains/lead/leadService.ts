@@ -140,6 +140,8 @@ class LeadService {
         interestProgram: program._id,
         source: data.source,
         notes: data.notes || undefined,
+        birth_date: data.birth_date ? new Date(`${data.birth_date}T00:00:00.000Z`) : undefined,
+        education_level: data.education_level || undefined,
         status: 'active',
       })
 
@@ -243,6 +245,9 @@ class LeadService {
         interestProgram: program._id,
         source: data.source,
         notes: data.notes,
+        // Vacío borra el valor: el campo es opcional y debe poder quitarse
+        birth_date: data.birth_date ? new Date(`${data.birth_date}T00:00:00.000Z`) : null,
+        education_level: data.education_level || null,
         status,
       }}, {new: true})
       .populate(LEAD_POPULATE)
